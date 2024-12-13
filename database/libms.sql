@@ -13,6 +13,7 @@ create table users(
     password varchar(30) not null,
     contact_no varchar(15) not null,
     position varchar(20) not null,
+    isActive bool default true,
     createdAt timestamp,
     updatedAt timestamp
 );
@@ -27,6 +28,9 @@ create table books(
     book_name varchar(50) not null,
     ISBN varchar(50) not null,
     author_id int not null,
+    quantity int not null,
+    available_qty int not null,
+    isActive bool default true,
     foreign key (author_id) references authors(author_id)
 );
 
@@ -37,7 +41,8 @@ create table borrowers(
     address varchar(100) not null,
     NIC varchar(20) not null,
     email varchar(50) not null,
-	contact_no varchar(15) not null
+	contact_no varchar(15) not null,
+    isActive bool default true
 );
 
 create table borrowed_books(

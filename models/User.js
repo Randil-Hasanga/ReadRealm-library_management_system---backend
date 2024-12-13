@@ -40,6 +40,10 @@ const User = sequelize.define('User',{
         type: DataTypes.STRING,
         allowNull: false,
     },
+    isActive: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+    },
 }, {
     tableName: 'users',
     timestamps: true
