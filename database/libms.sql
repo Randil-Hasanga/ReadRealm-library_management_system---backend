@@ -20,7 +20,9 @@ create table users(
 
 create table authors(
 	author_id int primary key auto_increment not null,
-    author_name varchar(50) not null
+    author_name varchar(50) not null,
+	createdAt timestamp,
+    updatedAt timestamp
 );
 
 create table books(
@@ -31,6 +33,8 @@ create table books(
     quantity int not null,
     available_qty int not null,
     isActive bool default true,
+	createdAt timestamp,
+    updatedAt timestamp,
     foreign key (author_id) references authors(author_id)
 );
 

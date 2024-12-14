@@ -10,8 +10,10 @@ app.use(express.json());
 
 // Route imports
 const userRoute = require('./routes/usersRoute');
+const authorRoute = require('./routes/authorRoute');
 
 // Use Routes
-app.use('/user', userRoute);
+app.use('/users', userRoute);
+app.use('/authors', authorRoute);
 
 module.exports = app;
