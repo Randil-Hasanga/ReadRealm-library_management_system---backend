@@ -1,7 +1,7 @@
 const sequelize = require('../db');
 const { DataTypes } = require('sequelize');
 
-const User = sequelize.define('User',{
+const User = sequelize.define('User', {
     //define columns
     user_id: {
         type: DataTypes.INTEGER,
@@ -43,6 +43,7 @@ const User = sequelize.define('User',{
     isActive: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
+        defaultValue: true
     },
 }, {
     tableName: 'users',

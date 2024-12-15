@@ -2,7 +2,6 @@ const User = require('../models/User');
 
 const userService = {
     createUser: async (data) => {
-        // add {} id error
         const { email } = data;
 
         const existingUser = await User.findOne({ where: { email } });

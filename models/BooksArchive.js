@@ -2,7 +2,7 @@ const sequelize = require('../db');
 const { DataTypes } = require('sequelize');
 const Author = require('../models/Author');
 
-const Book = sequelize.define('Book', {
+const BooksArchive = sequelize.define('BooksArchive', {
     book_id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -34,14 +34,17 @@ const Book = sequelize.define('Book', {
     },
     isActive: {
         type: DataTypes.BOOLEAN,
-        allowNull: false,
-        defaultValue: true
+        allowNull: false
     },
+    deletedAt: {
+        type: DataTypes.DATE,
+        allowNull: false
+    }
 }, {
-    tableName: 'books',
-    timestamps: true,
+    tableName: 'books_archive',
+    timestamps: true
 });
 
-Book.belongsTo(Author, { foreignKey: 'author_id', as: 'author' }); // * define association
+BooksArchive.belongsTo(Author, { foreignKey: 'author_id', as: 'author' }); // * define association
 
-module.exports = Book;
+module.exports = BooksArchive;

@@ -38,6 +38,11 @@ create table books(
     foreign key (author_id) references authors(author_id)
 );
 
+CREATE TABLE books_archive LIKE books;
+
+ALTER TABLE books_archive 
+ADD COLUMN deletedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+
 create table borrowers(
 	borrower_id int primary key auto_increment not null,
     fname varchar(20) not null,
