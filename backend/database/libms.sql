@@ -51,7 +51,9 @@ create table borrowers(
     NIC varchar(20) not null,
     email varchar(50) not null,
 	contact_no varchar(15) not null,
-    isActive bool default true
+    isActive bool default true,
+	createdAt timestamp,
+    updatedAt timestamp
 );
 
 create table borrowed_books(

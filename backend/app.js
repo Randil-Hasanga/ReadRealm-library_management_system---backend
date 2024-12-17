@@ -12,10 +12,12 @@ app.use(express.json());
 const userRoute = require('./routes/usersRoute');
 const authorRoute = require('./routes/authorRoute');
 const bookRoute = require('./routes/booksRoute');
+const borrowerRoute = require('./routes/borrowerRoute');
 
 // Use Routes
 app.use('/users', userRoute);
 app.use('/authors', authorRoute);
 app.use('/books', bookRoute);
+app.use('/borrowers', borrowerRoute);
 
 module.exports = app;

@@ -29,3 +29,17 @@ VALUES
 ('Kalu Diya Dahara', '978-955-80-2345-9', 9, 55, 54, true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 ('Pem Kekula', '978-955-90-6789-3', 10, 15, 15, true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
+INSERT INTO borrowers (fname, lname, address, NIC, email, contact_no, isActive, createdAt, updatedAt) 
+VALUES 
+('Kamal', 'Perera', 'No. 23, Galle Road, Colombo 03', '123456789V', 'kamal.perera@gmail.com', '0771234567', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('Nimal', 'Fernando', 'No. 45, Kandy Road, Gampaha', '987654321V', 'nimal.fernando@yahoo.com', '0719876543', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('Sunethra', 'Wijesinghe', 'No. 12, Lake View, Nuwara Eliya', '456789123V', 'sunethra.w@gmail.com', '0774567891', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('Amali', 'Jayawardena', 'No. 89, Flower Road, Matara', '789123456V', 'amali.j@outlook.com', '0767891234', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('Saman', 'Ekanayake', 'No. 65, Temple Road, Kurunegala', '321654987V', 'saman.ek@gmail.com', '0783216549', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('Tharanga', 'Herath', 'No. 8, Circular Road, Anuradhapura', '159753258V', 'tharanga.herath@hotmail.com', '0751597532', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('Lakmal', 'Abeywickrama', 'No. 22, Coconut Estate, Polonnaruwa', '951357456V', 'lakmal.abey@gmail.com', '0779513574', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('Chathuri', 'Dissanayake', 'No. 77, Queens Street, Jaffna', '357951654V', 'chathuri.d@gmail.com', '0743579516', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('Hiran', 'Silva', 'No. 101, Hill Top, Bandarawela', '753159852V', 'hiran.silva@ymail.com', '0787531598', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('Anjali', 'Karunaratne', 'No. 49, River Bank, Badulla', '258456753V', 'anjali.k@gmail.com', '0722584567', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+
