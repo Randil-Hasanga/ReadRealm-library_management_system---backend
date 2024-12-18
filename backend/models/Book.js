@@ -42,6 +42,6 @@ const Book = sequelize.define('Book', {
     timestamps: true,
 });
 
-Book.belongsTo(Author, { foreignKey: 'author_id', as: 'author' }); // * define association
+//Book.belongsTo(Author, { foreignKey: 'author_id', as: 'author' }); // * define association
 
 module.exports = Book;

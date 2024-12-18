@@ -7,7 +7,7 @@ router
     .get('/', userController.getUsers)
     .get('/:id', userController.getUserById)
     .post('/', userController.createUser)
-    .patch('/:id/delete-or-restore', userController.deleteOrRestoreUserById)
+    .delete('/:id/delete-or-restore', userController.deleteOrRestoreUserById)
     .patch('/:id/update', userController.updateUserById);
 
 

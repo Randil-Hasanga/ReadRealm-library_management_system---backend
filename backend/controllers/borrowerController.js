@@ -34,6 +34,15 @@ const borrowerController = {
         } catch (error) {
             res.status(501).json({ message: "Borrower update failed", error: error.message });
         }
+    },
+    deleteOrRestoreBorrower: async (req, res) => {
+        try {
+            const id = req.params.id;
+            const effectedRows = await borrowerService.deleteOrRestoreBorrower(id, req.body);
+            res.status(201).json({ message: "Borrower updated successfully", effectedRows: effectedRows });
+        } catch (error) {
+            res.status(501).json({ message: "Borrower update failed", error: error.message });
+        }
     }
 };
 

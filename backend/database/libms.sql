@@ -60,9 +60,11 @@ create table borrowed_books(
 	bb_id int primary key auto_increment not null,
     borrower_id int not null,
     book_id int not null,
-    borrowed_date DATE,
-    return_date DATE,
+    borrowed_date DATE not null,
+    return_date DATE not null,
     isReturned bool default false,
+	createdAt timestamp,
+    updatedAt timestamp,
     foreign key (borrower_id) references borrowers(borrower_id),
     foreign key (book_id) references books(book_id)
 );

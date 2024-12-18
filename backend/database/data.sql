@@ -42,4 +42,21 @@ VALUES
 ('Hiran', 'Silva', 'No. 101, Hill Top, Bandarawela', '753159852V', 'hiran.silva@ymail.com', '0787531598', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 ('Anjali', 'Karunaratne', 'No. 49, River Bank, Badulla', '258456753V', 'anjali.k@gmail.com', '0722584567', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
+INSERT INTO borrowed_books (borrower_id, book_id, borrowed_date, return_date, isReturned, createdAt, updatedAt) 
+VALUES 
+(1, 1, '2024-12-01', '2024-12-15', false, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(2, 2, '2024-12-02', '2024-12-16', false, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(3, 3, '2024-12-03', '2024-12-17', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(4, 4, '2024-12-04', '2024-12-18', false, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(5, 5, '2024-12-05', '2024-12-19', false, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(6, 6, '2024-12-06', '2024-12-20', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(7, 7, '2024-12-07', '2024-12-21', false, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(8, 8, '2024-12-08', '2024-12-22', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(9, 9, '2024-12-09', '2024-12-23', false, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(10, 10, '2024-12-10', '2024-12-24', false, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
+
+select bb.bb_id as 'Borrowed book ID', bb.borrower_id, br.fname as 'borrower fname', br.lname as 'borrower lname', bb.book_id, b.book_name, bb.borrowed_date, bb.return_date, bb.isReturned
+from borrowed_books bb
+INNER JOIN borrowers br ON br.borrower_id = bb.borrower_id
+INNER JOIN books b ON b.book_id = bb.book_id;

@@ -1,4 +1,5 @@
-const Borrower = require('../models/Borrower');
+const { where } = require('sequelize');
+const { Borrower } = require('../models/index');
 
 const borrowerService = {
     getBorrowers: async () => {
@@ -30,6 +31,17 @@ const borrowerService = {
             throw new Error('Borrower not found');
         }
         const [effectedRows] = await Borrower.update(updatedData, { where: { borrower_id: id } });
+        if (effectedRows === 0) {
+            throw new Error('Failed to update borrower');
+        }
+        return effectedRows;
+    },
+    deleteOrRestoreBorrower: async (id, isActive) => {
+        const existing_borrower = await Borrower.findOne({ where: { borrower_id: id } });
+        if (!existing_borrower) {
+            throw new Error('Borrower not found');
+        }
+        const [effectedRows] = await Borrower.update(isActive, { where: { borrower_id: id } });
         if (effectedRows === 0) {
             throw new Error('Failed to update borrower');
         }
