@@ -19,7 +19,7 @@ VALUES
 INSERT INTO books (book_name, ISBN, author_id, quantity, available_qty, isActive, createdAt, updatedAt) 
 VALUES 
 ('Golu Muhude Kunatuwa', '978-955-30-1234-5', 1, 50, 50, true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('Amuthu Leda', '978-955-30-5678-9', 2, 30, 28, true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('Amuthu Leda', '978-955-30-5678-9', 2, 3, 3, true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 ('Sanda Eliyata Pem Benda', '978-955-20-2345-6', 3, 40, 40, true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 ('Deweni Inima', '978-955-10-6789-0', 4, 60, 59, true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 ('Sithuwili Pethuma', '978-955-40-3456-7', 5, 20, 20, true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),

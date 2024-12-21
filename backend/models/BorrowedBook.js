@@ -1,5 +1,5 @@
 const sequelize = require('../db');
-const {DataTypes} = require('sequelize');
+const { DataTypes } = require('sequelize');
 const Borrower = require('../models/Borrower');
 const Book = require('../models/Book');
 
@@ -9,7 +9,7 @@ const BorrowedBook = sequelize.define('BorrowedBook', {
         primaryKey: true,
         autoIncrement: true
     },
-    borrower_id:{
+    borrower_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
@@ -25,7 +25,7 @@ const BorrowedBook = sequelize.define('BorrowedBook', {
             key: 'book_id'
         }
     },
-    borrowed_date:{
+    borrowed_date: {
         type: DataTypes.DATE,
         allowNull: false,
     },
@@ -33,12 +33,12 @@ const BorrowedBook = sequelize.define('BorrowedBook', {
         type: DataTypes.DATE,
         allowNull: false
     },
-    isReturned:{
+    isReturned: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
         defaultValue: false
     }
-},{
+}, {
     tableName: 'borrowed_books',
     timestamps: true
 });
