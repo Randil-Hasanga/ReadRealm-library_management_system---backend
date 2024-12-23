@@ -1,5 +1,3 @@
-const { where } = require('sequelize');
-// const Book = require('../models/Book');
 const {Book} = require('../models/index'); 
 const BooksArchive = require('../models/BooksArchive');
 

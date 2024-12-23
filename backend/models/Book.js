@@ -1,6 +1,5 @@
 const sequelize = require('../db');
 const { DataTypes } = require('sequelize');
-const Author = require('../models/Author');
 
 const Book = sequelize.define('Book', {
     book_id: {
@@ -20,7 +19,7 @@ const Book = sequelize.define('Book', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {           // * foreign key for author table
-            model: Author,
+            model: 'authors',
             key: 'author_id'
         }
     },

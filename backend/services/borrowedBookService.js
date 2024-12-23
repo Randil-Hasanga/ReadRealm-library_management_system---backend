@@ -1,5 +1,6 @@
 const { BorrowedBook, Borrower, Book, Sequelize } = require('../models/index');
 const { Op } = require('sequelize');
+const dayjs = require('dayjs');
 
 
 const borrowedBookService = {
@@ -235,7 +236,7 @@ const borrowedBookService = {
         }
     },
     returnBook: async (bb_id) => {
-        let transaction; 
+        let transaction;
         try {
             transaction = await Sequelize.transaction();
 
@@ -253,9 +254,13 @@ const borrowedBookService = {
             }
 
             const { book_id } = borrowedBook;
+            const currentDate = dayjs().format('YYYY-MM-DD');
 
             await BorrowedBook.update(
-                { isReturned: true },
+                {
+                    isReturned: true,
+                    returned_date: currentDate
+                },
                 { where: { bb_id: bb_id }, transaction }
             );
 

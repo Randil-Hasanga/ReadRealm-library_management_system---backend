@@ -1,18 +1,18 @@
 const sequelize = require('../db');
 const { DataTypes } = require('sequelize');
 
-const BorrowedBook = sequelize.define('BorrowedBook', {
-    bb_id: {
+const Fine = sequelize.define('Fine', {
+    fine_id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true
     },
-    borrower_id: {
+    bb_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: "borrowers",
-            key: 'borrower_id'
+            model: "borrowed_books",
+            key: 'bb_id'
         }
     },
     book_id: {
@@ -23,26 +23,24 @@ const BorrowedBook = sequelize.define('BorrowedBook', {
             key: 'book_id'
         }
     },
-    borrowed_date: {
-        type: DataTypes.DATE,
+    borrower_id: {
+        type: DataTypes.INTEGER,
         allowNull: false,
+        references: {
+            model: "borrowers",
+            key: 'borrower_id'
+        }
     },
-    return_date: {
-        type: DataTypes.DATE,
-        allowNull: false
+    fine_amount: {
+        type: DataTypes.DECIMAL,
     },
-    returned_date: {
-        type: DataTypes.DATE,
-        allowNull: true
-    },
-    isReturned: {
+    isPaid: {
         type: DataTypes.BOOLEAN,
-        allowNull: false,
         defaultValue: false
     }
 }, {
-    tableName: 'borrowed_books',
-    timestamps: true
+    tableName: 'fines',
+    timestamps: false
 });
 
-module.exports = BorrowedBook;
+module.exports = Fine;

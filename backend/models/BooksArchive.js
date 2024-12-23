@@ -1,6 +1,5 @@
 const sequelize = require('../db');
 const { DataTypes } = require('sequelize');
-const Author = require('../models/Author');
 
 const BooksArchive = sequelize.define('BooksArchive', {
     book_id: {
@@ -20,7 +19,7 @@ const BooksArchive = sequelize.define('BooksArchive', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {           // * foreign key for author table
-            model: Author,
+            model: "authors",
             key: 'author_id'
         }
     },
@@ -44,7 +43,5 @@ const BooksArchive = sequelize.define('BooksArchive', {
     tableName: 'books_archive',
     timestamps: true
 });
-
-BooksArchive.belongsTo(Author, { foreignKey: 'author_id', as: 'author' }); // * define association
 
 module.exports = BooksArchive;

@@ -7,7 +7,7 @@ router
     .get('/', borrowedBookController.getBorrowedBooks)
     .get('/:id', borrowedBookController.getBorrowedBookById)
     .get('/borrower/:id', borrowedBookController.getBorrowedBooksByBorrowerId)
-    .patch('/', borrowedBookController.insertBorrowedBook)
+    .post('/', borrowedBookController.insertBorrowedBook)
     .patch('/return/:id', borrowedBookController.returnBook)
 
 module.exports = router;

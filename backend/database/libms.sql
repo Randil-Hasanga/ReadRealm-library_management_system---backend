@@ -62,6 +62,7 @@ create table borrowed_books(
     book_id int not null,
     borrowed_date DATE not null,
     return_date DATE not null,
+    returned_date DATE,
     isReturned bool default false,
 	createdAt timestamp,
     updatedAt timestamp,
@@ -72,8 +73,13 @@ create table borrowed_books(
 create table fines(
 	fine_id int primary key auto_increment not null,
     bb_id int not null,
+    book_id int not null,
+	borrower_id int not null,
     fine_amount decimal(10,2), -- rs 20 for extra day
-    foreign key (bb_id) references borrowed_books(bb_id)
+    isPaid bool default false,
+    foreign key (bb_id) references borrowed_books(bb_id),
+    foreign key (book_id) references books(book_id),
+    foreign key (borrower_id) references borrowers(borrower_id)
 );
 
 
