@@ -13,6 +13,17 @@ const BookService = {
       throw error;
     }
   },
+
+  addBook: async (bookData) => {
+    try {
+      const response = await axios.post(baseUrl, bookData);
+      console.log("Book added:", response.data.data); // Log the correct data
+      return response.data.data; // Return the book data
+    } catch (error) {
+      console.error("Error adding book:", error);
+      throw error;
+    }
+  },
 };
 
 export default BookService;

@@ -16,8 +16,8 @@
     width: 80px;
     height: 80px;
     display: grid;
-    background: #fff;
-    filter: blur(4px) contrast(10);
+    background: transparent;
+    filter: blur(1px) contrast(10);
     padding: 8px;
     mix-blend-mode: darken;
  }

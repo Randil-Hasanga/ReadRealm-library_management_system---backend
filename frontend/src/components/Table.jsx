@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 const Table = ({ columns, data, renderActions }) => {
   return (
     <table className="w-full bg-white shadow-md rounded-xl overflow-hidden">
-      <thead className="bg-orange-200">
+      <thead className="bg-orange-200 text-md">
         <tr>
           {columns.map((col, index) => (
             <th key={index} className="text-left p-4">
@@ -13,7 +13,7 @@ const Table = ({ columns, data, renderActions }) => {
           {renderActions && <th className="text-left p-4">Actions</th>}
         </tr>
       </thead>
-      <tbody className="bg-white">
+      <tbody className="bg-white text-md">
         {data.map((row, rowIndex) => (
           <tr key={rowIndex} className="border-t">
             {columns.map((col, colIndex) => (
