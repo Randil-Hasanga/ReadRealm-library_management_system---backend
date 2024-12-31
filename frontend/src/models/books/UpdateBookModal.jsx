@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
-import AuthorService from "../services/AuthorService";
-import BookService from "../services/BookService";
+import AuthorService from "../../services/AuthorService";
+import PropTypes from "prop-types";  // Import PropTypes
 
-const AddBookModal = ({ isOpen, onClose, onSubmit }) => {
-    const [newBook, setNewBook] = useState({
+const UpdateBookModal = ({ isOpen, onClose, onSubmit, book }) => {
+    const [updatedBook, setUpdatedBook] = useState({
         book_name: "",
         ISBN: "",
         author_id: "",
@@ -14,6 +14,7 @@ const AddBookModal = ({ isOpen, onClose, onSubmit }) => {
     const [filteredAuthors, setFilteredAuthors] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [loadingAuthors, setLoadingAuthors] = useState(false);
+    const [error, setError] = useState("");
 
     // Fetch all authors when the modal opens
     useEffect(() => {
@@ -35,6 +36,22 @@ const AddBookModal = ({ isOpen, onClose, onSubmit }) => {
         }
     }, [isOpen]);
 
+    // Update the form with book details when the modal opens
+    useEffect(() => {
+        if (book && isOpen) {
+            setUpdatedBook({
+                book_name: book.book_name,
+                ISBN: book.ISBN,
+                author_id: book.author_id,
+                quantity: book.quantity,
+                available_qty: book.available_qty,
+            });
+
+            const author = authors.find((author) => author.author_id === book.author_id);
+            setSearchQuery(author ? author.author_name : "");
+        }
+    }, [isOpen, book, authors]);
+
     // Filter authors based on search query
     useEffect(() => {
         if (searchQuery) {
@@ -51,20 +68,18 @@ const AddBookModal = ({ isOpen, onClose, onSubmit }) => {
     const handleInputChange = (e) => {
         const { name, value } = e.target;
 
-        if (name === 'author_id') {
+        if (name === "author_id") {
             setSearchQuery(value);
-
-            if (value === "") {
-                setNewBook((prevState) => ({
-                    ...prevState,
-                    author_id: "",
-                }));
-            }
         } else {
-            setNewBook((prevState) => ({
+            setUpdatedBook((prevState) => ({
                 ...prevState,
                 [name]: value,
             }));
+        }
+
+        // Reset the error when user starts typing again
+        if (name === "quantity") {
+            setError("");
         }
     };
 
@@ -74,7 +89,7 @@ const AddBookModal = ({ isOpen, onClose, onSubmit }) => {
             (author) => author.author_name === e.target.value
         );
         if (selectedAuthor) {
-            setNewBook((prevState) => ({
+            setUpdatedBook((prevState) => ({
                 ...prevState,
                 author_id: selectedAuthor.author_id,
             }));
@@ -82,26 +97,45 @@ const AddBookModal = ({ isOpen, onClose, onSubmit }) => {
         }
     };
 
+    // Handle form submission
     const handleSubmit = (e) => {
         e.preventDefault();
-        onSubmit({ ...newBook, available_qty: newBook.quantity });
+
+        // Calculate the difference in quantity
+        const quantityDifference = updatedBook.quantity - book.quantity;
+
+        // Check if the new available quantity will go below 0
+        const newAvailableQty = book.available_qty + quantityDifference;
+        if (newAvailableQty < 0) {
+            setError("Some books are already borrowed");
+            return;
+        }
+
+        // Update the book object with the new available_qty
+        const updatedBookWithNewAvailableQty = {
+            ...updatedBook,
+            available_qty: newAvailableQty,
+        };
+
+        // Submit the updated book with the new available quantity
+        onSubmit(updatedBookWithNewAvailableQty);
     };
 
     return (
         isOpen && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
                 <div className="bg-white p-8 rounded-xl shadow-xl w-full sm:w-96">
-                    <h2 className="text-2xl font-semibold text-gray-800 mb-6">Add New Book</h2>
+                    <h2 className="text-2xl font-semibold text-gray-800 mb-6">Update Book</h2>
                     <form onSubmit={handleSubmit}>
                         <div className="mb-5">
                             <label className="block text-sm font-medium text-gray-700">Book Name</label>
                             <input
                                 type="text"
                                 name="book_name"
-                                value={newBook.book_name}
+                                value={updatedBook.book_name}
                                 onChange={handleInputChange}
                                 required
-                                className="mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600 transition-all"
+                                className="mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-orange-300 transition-all"
                             />
                         </div>
                         <div className="mb-5">
@@ -109,10 +143,10 @@ const AddBookModal = ({ isOpen, onClose, onSubmit }) => {
                             <input
                                 type="text"
                                 name="ISBN"
-                                value={newBook.ISBN}
+                                value={updatedBook.ISBN}
                                 onChange={handleInputChange}
                                 required
-                                className="mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600 transition-all"
+                                className="mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-orange-300 transition-all"
                             />
                         </div>
                         <div className="mb-5">
@@ -120,12 +154,12 @@ const AddBookModal = ({ isOpen, onClose, onSubmit }) => {
                             <input
                                 type="text"
                                 name="author_id"
-                                value={searchQuery} // Show the search query, which the user will change to select an author
+                                value={searchQuery}
                                 onChange={handleInputChange}
                                 list="author-list"
-                                onBlur={handleAuthorSelection}  // Handle selection when the input loses focus
+                                onBlur={handleAuthorSelection}
                                 required
-                                className="mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600 transition-all"
+                                className="mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-orange-300 transition-all"
                             />
                             <datalist id="author-list">
                                 {filteredAuthors.map((author) => (
@@ -138,11 +172,12 @@ const AddBookModal = ({ isOpen, onClose, onSubmit }) => {
                             <input
                                 type="number"
                                 name="quantity"
-                                value={newBook.quantity}
+                                value={updatedBook.quantity}
                                 onChange={handleInputChange}
                                 required
-                                className="mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600 transition-all"
+                                className="mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-orange-300 transition-all"
                             />
+                            {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
                         </div>
                         <div className="flex justify-between mt-4">
                             <button
@@ -154,9 +189,9 @@ const AddBookModal = ({ isOpen, onClose, onSubmit }) => {
                             </button>
                             <button
                                 type="submit"
-                                className="bg-indigo-600 text-white px-6 py-2 rounded-md"
+                                className="bg-orange-600 text-white px-6 py-2 rounded-md"
                             >
-                                Add Book
+                                Update Book
                             </button>
                         </div>
                     </form>
@@ -166,4 +201,18 @@ const AddBookModal = ({ isOpen, onClose, onSubmit }) => {
     );
 };
 
-export default AddBookModal;
+// Add PropTypes validation
+UpdateBookModal.propTypes = {
+    isOpen: PropTypes.bool.isRequired, 
+    onClose: PropTypes.func.isRequired,
+    onSubmit: PropTypes.func.isRequired,
+    book: PropTypes.shape({
+        book_name: PropTypes.string.isRequired,
+        ISBN: PropTypes.string.isRequired,
+        author_id: PropTypes.string.isRequired,
+        quantity: PropTypes.number.isRequired,
+        available_qty: PropTypes.number.isRequired,
+    }).isRequired,
+};
+
+export default UpdateBookModal;

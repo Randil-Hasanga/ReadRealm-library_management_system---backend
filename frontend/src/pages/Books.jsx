@@ -3,14 +3,17 @@ import BookService from "../services/BookService";
 import Table from "../components/Table";
 import Loader from "../components/Loader";
 import Icon from "../components/Icon";
-import AddBookModal from "../models/AddBookModal";
+import AddBookModal from "../models/books/AddBookModal";
+import UpdateBookModal from "../models/books/UpdateBookModal"; // Assuming this exists
 
 const Books = () => {
   const [books, setBooks] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
   const [loading, setLoading] = useState(true);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAddBookModalOpen, setIsAddBookModalOpen] = useState(false);
+  const [isUpdateBookModalOpen, setIsUpdateBookModalOpen] = useState(false);
+  const [selectedBook, setSelectedBook] = useState(null); // For Update Modal
 
   // Fetch books from the API on initial load
   useEffect(() => {
@@ -30,22 +33,51 @@ const Books = () => {
 
   // Handle opening the modal for adding a new book
   const handleAddBookClick = () => {
-    setIsModalOpen(true);
+    setIsAddBookModalOpen(true);
   };
 
-  // Handle closing the modal
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
+  // Handle closing the Add Book Modal
+  const handleCloseAddBookModal = () => {
+    setIsAddBookModalOpen(false);
+  };
+
+  // Handle opening the Update Book Modal
+  const handleUpdateBookClick = (book) => {
+    setSelectedBook(book);
+    setIsUpdateBookModalOpen(true);
+  };
+
+  // Handle closing the Update Book Modal
+  const handleCloseUpdateBookModal = () => {
+    setIsUpdateBookModalOpen(false);
+    setSelectedBook(null);
   };
 
   const handleAddBookSubmit = async (newBook) => {
     try {
       const addedBook = await BookService.addBook(newBook);
-      console.log('Added Book:', addedBook);
+      console.log("Added Book:", addedBook);
       setBooks((prevBooks) => [...prevBooks, addedBook]);
-      setIsModalOpen(false);
+      setIsAddBookModalOpen(false);
     } catch (error) {
       console.error("Error adding book:", error);
+    }
+  };
+
+  const handleUpdateBookSubmit = async (updatedBook) => {
+    try {
+      const bookId = selectedBook.book_id;
+      const result = await BookService.updateBook(bookId, updatedBook);
+      console.log("Updated Book:", result);
+      setBooks((prevBooks) =>
+        prevBooks.map((book) =>
+          book.book_id === bookId ? { ...book, ...updatedBook } : book
+        )
+      );
+      setIsUpdateBookModalOpen(false);
+      setSelectedBook(null);
+    } catch (error) {
+      console.error("Error updating book:", error);
     }
   };
 
@@ -67,13 +99,22 @@ const Books = () => {
 
   const renderActions = (book) => (
     <>
-      <button className="text-gray-500 hover:text-gray-900" onClick={() => console.log("Refresh clicked")}>
+      <button
+        className="text-gray-500 hover:text-gray-900"
+        onClick={() => handleUpdateBookClick(book)}
+      >
         <Icon name="RefreshCw" />
       </button>
-      <button className="text-gray-500 hover:text-gray-900" onClick={() => console.log("Delete clicked")}>
+      <button
+        className="text-gray-500 hover:text-gray-900"
+        onClick={() => console.log("Delete clicked")}
+      >
         <Icon name="Trash2" />
       </button>
-      <button className="text-gray-500 hover:text-gray-900" onClick={() => console.log("View clicked")}>
+      <button
+        className="text-gray-500 hover:text-gray-900"
+        onClick={() => console.log("View clicked")}
+      >
         <Icon name="BookOpen" />
       </button>
     </>
@@ -86,10 +127,10 @@ const Books = () => {
       {loading && <Loader />}
 
       <header className="flex justify-between items-center mb-6 mt-11">
-        <h1 className="text-3xl font-bold text-orange-700">Book Management</h1>
+        <h1 className="text-3xl font-bold text-orange-600">Book Management</h1>
         <div className="flex items-center">
           <button
-            className="bg-orange-900 shadow-md text-white px-4 py-2 rounded-md mr-4"
+            className="bg-orange-500 shadow-md text-white px-4 py-2 rounded-md mr-4 font-semibold"
             onClick={handleAddBookClick}
           >
             Add Book
@@ -115,8 +156,11 @@ const Books = () => {
         {[...Array(totalPages)].map((_, index) => (
           <button
             key={index}
-            className={`px-4 py-2 rounded-md mx-1 ${currentPage === index + 1 ? "bg-orange-500 text-white" : "bg-gray-300 text-gray-700"
-              }`}
+            className={`px-4 py-2 rounded-md mx-1 ${
+              currentPage === index + 1
+                ? "bg-orange-500 text-white"
+                : "bg-gray-300 text-gray-700"
+            }`}
             onClick={() => paginate(index + 1)}
           >
             {index + 1}
@@ -131,7 +175,17 @@ const Books = () => {
         </button>
       </div>
 
-      <AddBookModal isOpen={isModalOpen} onClose={handleCloseModal} onSubmit={handleAddBookSubmit} />
+      <AddBookModal
+        isOpen={isAddBookModalOpen}
+        onClose={handleCloseAddBookModal}
+        onSubmit={handleAddBookSubmit}
+      />
+      <UpdateBookModal
+        isOpen={isUpdateBookModalOpen}
+        onClose={handleCloseUpdateBookModal}
+        onSubmit={handleUpdateBookSubmit}
+        book={selectedBook} // Pass selected book for editing
+      />
     </div>
   );
 };

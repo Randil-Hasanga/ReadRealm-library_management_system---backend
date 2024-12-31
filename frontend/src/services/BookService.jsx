@@ -24,6 +24,17 @@ const BookService = {
       throw error;
     }
   },
+  
+  updateBook: async (bookId, bookData) => {
+    try {
+      const response = await axios.patch(`${baseUrl}/${bookId}`, bookData);
+      console.log("Book updated:", response.data.data);
+      return response.data.data; // Return the updated book data
+    } catch (error) {
+      console.error("Error updating book:", error);
+      throw error;
+    }
+  },
 };
 
 export default BookService;
