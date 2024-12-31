@@ -7,7 +7,7 @@ const userService = {
         const existingUser = await User.findOne({ where: { email } });
 
         if (existingUser) {
-            throw new Error('Email is already exist');
+            console.error('Email is already exist');
         }
 
         const newUser = await User.create(data);
@@ -20,20 +20,20 @@ const userService = {
     getUserById: async (id) => {
         const user = await User.findOne({ where: { user_id: id } });
         if (!user) {
-            throw new Error('User not found');
+            console.error('User not found');
         }
         return user;
     },
     deleteAndRestoreUser: async (id, isActive) => {
         const user = await User.findOne({ where: { user_id: id } });
         if (!user) {
-            throw new Error('User not found');
+            console.error('User not found');
         }
 
         const [effectedRows] = await User.update({ isActive: isActive }, { where: { user_id: id } });
 
         if (effectedRows === 0) {
-            throw new Error('Failed to update user');
+            console.error('Failed to update user');
         }
 
         return await User.findOne({ where: { user_id: id } });
@@ -41,12 +41,12 @@ const userService = {
     updateUserById: async (id, updatedFields) => {
         const user = await User.findOne({ where: { user_id: id } });
         if (!user) {
-            throw new Error('User not found');
+            console.error('User not found');
         }
         const [effectedRows] = await User.update(updatedFields, { where: { user_id: id } });
 
         if (effectedRows === 0) {
-            throw new Error('Failed to update user');
+            console.error('Failed to update user');
         }
 
         return await User.findOne({ where: { user_id: id } });

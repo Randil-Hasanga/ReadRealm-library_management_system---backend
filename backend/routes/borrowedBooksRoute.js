@@ -7,6 +7,7 @@ router
     .get('/', borrowedBookController.getBorrowedBooks)
     .get('/:id', borrowedBookController.getBorrowedBookById)
     .get('/borrower/:id', borrowedBookController.getBorrowedBooksByBorrowerId)
+    .get('/books/:id', borrowedBookController.getBorrowedBooksByBookId)
     .post('/', borrowedBookController.insertBorrowedBook)
     .patch('/return/:id', borrowedBookController.returnBook)
 

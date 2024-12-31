@@ -39,7 +39,7 @@ const fineService = {
         if (fines && fines.length != 0) {
             return fines;
         } else {
-            throw new Error("Error in fines service");
+            console.error("Error in fines service");
         }
     },
     getFineById: async (fine_id) => {
@@ -80,19 +80,19 @@ const fineService = {
         if (fines && fines.length != 0) {
             return fines;
         } else {
-            throw new Error("Error in fines service");
+            console.error("Error in fines service");
         }
     },
     payFine: async (bb_id) => {
 
         const fine = await Fine.findOne({ where: { bb_id: bb_id } });
         if (!fine) {
-            throw new Error('Fine not found');
+            console.error('Fine not found');
         }
 
         const [effectedRows] = await Fine.update({ isPaid: true }, { where: { bb_id: bb_id } });
         if (effectedRows === 0) {
-            throw new Error('Failed to update fine');
+            console.error('Failed to update fine');
         }
         return await Fine.findOne({ where: { bb_id: bb_id } });
     }

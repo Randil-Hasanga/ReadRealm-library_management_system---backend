@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import AuthorService from "../../services/AuthorService";
-import BookService from "../../services/BookService";
 
 const AddBookModal = ({ isOpen, onClose, onSubmit }) => {
     const [newBook, setNewBook] = useState({
@@ -14,6 +13,7 @@ const AddBookModal = ({ isOpen, onClose, onSubmit }) => {
     const [filteredAuthors, setFilteredAuthors] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [loadingAuthors, setLoadingAuthors] = useState(false);
+    const [authorWarning, setAuthorWarning] = useState(""); // State for warning message
 
     // Fetch all authors when the modal opens
     useEffect(() => {
@@ -53,6 +53,7 @@ const AddBookModal = ({ isOpen, onClose, onSubmit }) => {
 
         if (name === 'author_id') {
             setSearchQuery(value);
+            setAuthorWarning(""); // Clear warning when user types
 
             if (value === "") {
                 setNewBook((prevState) => ({
@@ -79,11 +80,20 @@ const AddBookModal = ({ isOpen, onClose, onSubmit }) => {
                 author_id: selectedAuthor.author_id,
             }));
             setSearchQuery(selectedAuthor.author_name);
+            setAuthorWarning(""); // Clear warning if a valid author is selected
+        } else {
+            setAuthorWarning("Author not found. Please select a valid author."); // Set warning if author is not found
         }
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        // Check if the author exists before submitting
+        const selectedAuthor = authors.find(author => author.author_name === searchQuery);
+        if (!selectedAuthor) {
+            setAuthorWarning("Please select a valid author.");
+            return; // Prevent submission if author is invalid
+        }
         onSubmit({ ...newBook, available_qty: newBook.quantity });
     };
 
@@ -101,7 +111,7 @@ const AddBookModal = ({ isOpen, onClose, onSubmit }) => {
                                 value={newBook.book_name}
                                 onChange={handleInputChange}
                                 required
-                                className="mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600 transition-all"
+                                className="mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-orange-300 transition-all"
                             />
                         </div>
                         <div className="mb-5">
@@ -112,7 +122,7 @@ const AddBookModal = ({ isOpen, onClose, onSubmit }) => {
                                 value={newBook.ISBN}
                                 onChange={handleInputChange}
                                 required
-                                className="mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600 transition-all"
+                                className="mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-orange-300 transition-all"
                             />
                         </div>
                         <div className="mb-5">
@@ -120,18 +130,20 @@ const AddBookModal = ({ isOpen, onClose, onSubmit }) => {
                             <input
                                 type="text"
                                 name="author_id"
-                                value={searchQuery} // Show the search query, which the user will change to select an author
+                                value={searchQuery}
                                 onChange={handleInputChange}
                                 list="author-list"
-                                onBlur={handleAuthorSelection}  // Handle selection when the input loses focus
+                                onBlur={handleAuthorSelection}
                                 required
-                                className="mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600 transition-all"
+                                className="mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-300
+                                focus:border-orange-300 transition-all"
                             />
                             <datalist id="author-list">
                                 {filteredAuthors.map((author) => (
                                     <option key={author.author_id} value={author.author_name} />
                                 ))}
                             </datalist>
+                            {authorWarning && <p className="text-red-500 text-sm mt-1">{authorWarning}</p>} {/* Display warning message */}
                         </div>
                         <div className="mb-5">
                             <label className="block text-sm font-medium text-gray-700">Quantity</label>
@@ -141,7 +153,8 @@ const AddBookModal = ({ isOpen, onClose, onSubmit }) => {
                                 value={newBook.quantity}
                                 onChange={handleInputChange}
                                 required
-                                className="mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600 transition-all"
+                                className="mt-2 w-full px-4 py-2 border border-gray-300
+                                rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-orange-300 transition-all"
                             />
                         </div>
                         <div className="flex justify-between mt-4">
@@ -154,7 +167,7 @@ const AddBookModal = ({ isOpen, onClose, onSubmit }) => {
                             </button>
                             <button
                                 type="submit"
-                                className="bg-indigo-600 text-white px-6 py-2 rounded-md"
+                                className="bg-orange-600 text-white px-6 py-2 rounded-md"
                             >
                                 Add Book
                             </button>

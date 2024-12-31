@@ -27,6 +27,15 @@ const borrowedBookController = {
             res.status(501).json({ message: 'retrieval failed', error: error.message });
         }
     },
+    getBorrowedBooksByBookId: async (req, res) => {
+        try {
+            const id = req.params.id;
+            const books = await borrowedBookService.getBorrowedBooksByBookId(id);
+            res.status(201).json({ message: 'Borrowed books', data: books });
+        } catch (error) {
+            res.status(501).json({ message: 'retrieval failed', error: error.message });
+        }
+    },
     getOverDueBooks: async (req, res) => {
         try {
             const books = await borrowedBookService.getOverDueBooks();

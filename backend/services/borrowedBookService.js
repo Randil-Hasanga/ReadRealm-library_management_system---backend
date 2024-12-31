@@ -36,7 +36,7 @@ const borrowedBookService = {
             });
 
             if (!books || books.length === 0) {
-                throw new Error('No borrowed books found');
+                console.error('No borrowed books found');
             }
 
             return books;
@@ -78,7 +78,7 @@ const borrowedBookService = {
             });
 
             if (!books || books.length === 0) {
-                throw new Error('No borrowed books found');
+                console.error('No borrowed books found');
             }
 
             return books;
@@ -120,7 +120,49 @@ const borrowedBookService = {
             });
 
             if (!books || books.length === 0) {
-                throw new Error('No borrowed books found');
+                console.error('No borrowed books found');
+            }
+
+            return books;
+        } catch (error) {
+            console.error('Error fetching borrowed books:', error.message);
+            throw error;
+        }
+    },
+    getBorrowedBooksByBookId: async (book_id) => {
+        try {
+            const books = await BorrowedBook.findAll({
+                attributes: [
+                    ['bb_id', 'BorrowedBookID'],
+                    'borrower_id',
+                    [Sequelize.col('Borrower.fname'), 'BorrowerFirstName'],
+                    [Sequelize.col('Borrower.lname'), 'BorrowerLastName'],
+                    [Sequelize.col('Borrower.email'), 'email'],
+                    [Sequelize.col('Borrower.contact_no'), 'contact_no'],
+                    'book_id',
+                    [Sequelize.col('Book.book_name'), 'BookName'],
+                    'borrowed_date',
+                    'return_date',
+                    'isReturned'
+                ],
+                include: [
+                    {
+                        model: Borrower,
+                        as: 'borrower',
+                        attributes: [] // Fetch only the required fields via Sequelize.col
+                    },
+                    {
+                        model: Book,
+                        as: 'book',
+                        attributes: [] // Fetch only the required fields via Sequelize.col
+                    }
+                ],
+                raw: true, // Ensures plain JavaScript object results
+                where: { book_id: book_id }
+            });
+
+            if (!books || books.length === 0) {
+                console.error('No borrowed books found');
             }
 
             return books;
@@ -170,7 +212,7 @@ const borrowedBookService = {
             });
 
             if (!books || books.length === 0) {
-                throw new Error('No over due books found');
+                console.error('No over due books found');
             }
 
             return books;
@@ -227,7 +269,7 @@ const borrowedBookService = {
                 return new_borrowed_book; // Return the newly created borrowed book
             } else {
                 await transaction.rollback();
-                throw new Error('Book is not available for borrowing');
+                console.error('Book is not available for borrowing');
             }
         } catch (error) {
             await transaction.rollback();
@@ -246,11 +288,11 @@ const borrowedBookService = {
             });
 
             if (!borrowedBook) {
-                throw new Error('Borrowed book not found');
+                console.error('Borrowed book not found');
             }
 
             if (borrowedBook.isReturned) {
-                throw new Error('This book has already been returned');
+                console.error('This book has already been returned');
             }
 
             const { book_id } = borrowedBook;
