@@ -107,6 +107,12 @@ const Books = () => {
       
       console.log("Book Deleted:", response);
 
+      if(typeof(response) == 'string'){
+        //show a popup message window to say some one still borrowed the book
+        alert(response);
+        return;
+      }
+
       setBooks((prevBooks) => prevBooks.filter((book) => book.book_id !== bookId));
       
       setIsDeleteDialogOpen(false);
@@ -130,7 +136,8 @@ const Books = () => {
   // Table columns for books
   const columns = [
     { label: "ID", field: "book_id" },
-    { label: "Name", field: "book_name" },
+    { label: "Book Name", field: "book_name" },
+    { label: "Author", field: "author_name" },
     { label: "ISBN", field: "ISBN" },
     { label: "QTY", field: "quantity" },
     { label: "Available QTY", field: "available_qty" },
@@ -149,12 +156,6 @@ const Books = () => {
         onClick={() => handleDeleteBookClick(book)}
       >
         <Icon name="Trash2" />
-      </button>
-      <button
-        className="text-gray-500 hover:text-gray-900"
-        onClick={() => console.log("View clicked")}
-      >
-        <Icon name="BookOpen" />
       </button>
     </>
   );

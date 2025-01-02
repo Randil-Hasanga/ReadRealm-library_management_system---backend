@@ -1,9 +1,26 @@
-const {Book,BorrowedBook} = require('../models/index'); 
+const {Book,BorrowedBook, Author, Sequelize} = require('../models/index'); 
 const BooksArchive = require('../models/BooksArchive');
 
 const bookService = {
     getBooks: async () => {
-        const books = await Book.findAll({where: {isActive: true}});
+        const books = await Book.findAll({
+            attributes: [
+                'book_id',
+                'book_name',
+                'ISBN',
+                'author_id',
+                [Sequelize.col('Author.author_name'), 'author_name'],
+                'quantity',
+                'available_qty'
+            ],
+            include:[
+                {
+                    model: Author,
+                    as: 'author',
+                    attributes: []
+                }
+            ],
+            where: {isActive: true}});
         if (!books) {
             console.error('No books found');
         }
