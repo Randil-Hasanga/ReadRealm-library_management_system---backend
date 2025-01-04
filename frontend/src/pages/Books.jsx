@@ -6,6 +6,7 @@ import Icon from "../components/Icon";
 import AddBookModal from "../models/books/AddBookModal";
 import UpdateBookModal from "../models/books/UpdateBookModal";
 import DeleteConfirmationDialog from "../components/DeleteConfirmationDialog";
+import ReturnConfirmationDialog from "../components/ReturnConfirmationDialog";
 
 const Books = () => {
   const [books, setBooks] = useState([]);
@@ -118,7 +119,7 @@ const Books = () => {
       setIsDeleteDialogOpen(false);
       setSelectedBook(null);
     } catch (error) {
-      setErrorMessage(error.message || "An unexpected error occurred.");
+      console.error(error);
     } finally {
       setIsDeleting(false);
     }
@@ -155,7 +156,7 @@ const Books = () => {
         className="text-gray-500 hover:text-gray-900"
         onClick={() => handleDeleteBookClick(book)}
       >
-        <Icon name="Trash2" />
+        <Icon name="Trash2" color="red" />
       </button>
     </>
   );

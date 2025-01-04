@@ -18,6 +18,15 @@ const fineController = {
             res.status(501).json({ message: "Fine retrieval failed", error: error.message });
         }
     },
+    getFineByBbId: async (req, res) => {
+        try {
+            const id = req.params.id;
+            const fine = await fineService.getFineByBbId(id);
+            res.status(201).json({ message: "Fine retrieved successfully", data: fine });
+        } catch (error) {
+            res.status(501).json({ message: "Fine retrieval failed", error: error.message });
+        }
+    },
     payFine: async (req, res) => {
         try {
             const bb_id = req.params.id;

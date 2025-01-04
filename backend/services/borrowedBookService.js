@@ -1,4 +1,4 @@
-const { BorrowedBook, Borrower, Book, Sequelize } = require('../models/index');
+const { BorrowedBook, Borrower, Book, Sequelize, Fine } = require('../models/index');
 const { Op } = require('sequelize');
 const dayjs = require('dayjs');
 
@@ -10,8 +10,7 @@ const borrowedBookService = {
                 attributes: [
                     ['bb_id', 'BorrowedBookID'],
                     'borrower_id',
-                    [Sequelize.col('Borrower.fname'), 'BorrowerFirstName'],
-                    [Sequelize.col('Borrower.lname'), 'BorrowerLastName'],
+                    [Sequelize.fn('CONCAT', Sequelize.col('Borrower.fname'), ' ', Sequelize.col('Borrower.lname')), 'BorrowerFullName'],
                     [Sequelize.col('Borrower.email'), 'email'],
                     [Sequelize.col('Borrower.contact_no'), 'contact_no'],
                     'book_id',
@@ -32,7 +31,10 @@ const borrowedBookService = {
                         attributes: [] // Fetch only the required fields via Sequelize.col
                     }
                 ],
-                raw: true // Ensures plain JavaScript object results
+                raw: true, // Ensures plain JavaScript object results
+                where: {
+                    isReturned: false
+                }
             });
 
             if (!books || books.length === 0) {
@@ -51,8 +53,7 @@ const borrowedBookService = {
                 attributes: [
                     ['bb_id', 'BorrowedBookID'],
                     'borrower_id',
-                    [Sequelize.col('Borrower.fname'), 'BorrowerFirstName'],
-                    [Sequelize.col('Borrower.lname'), 'BorrowerLastName'],
+                    [Sequelize.fn('CONCAT', Sequelize.col('Borrower.fname'), ' ', Sequelize.col('Borrower.lname')), 'BorrowerFullName'],
                     [Sequelize.col('Borrower.email'), 'email'],
                     [Sequelize.col('Borrower.contact_no'), 'contact_no'],
                     'book_id',
@@ -93,8 +94,7 @@ const borrowedBookService = {
                 attributes: [
                     ['bb_id', 'BorrowedBookID'],
                     'borrower_id',
-                    [Sequelize.col('Borrower.fname'), 'BorrowerFirstName'],
-                    [Sequelize.col('Borrower.lname'), 'BorrowerLastName'],
+                    [Sequelize.fn('CONCAT', Sequelize.col('Borrower.fname'), ' ', Sequelize.col('Borrower.lname')), 'BorrowerFullName'],
                     [Sequelize.col('Borrower.email'), 'email'],
                     [Sequelize.col('Borrower.contact_no'), 'contact_no'],
                     'book_id',
@@ -135,8 +135,7 @@ const borrowedBookService = {
                 attributes: [
                     ['bb_id', 'BorrowedBookID'],
                     'borrower_id',
-                    [Sequelize.col('Borrower.fname'), 'BorrowerFirstName'],
-                    [Sequelize.col('Borrower.lname'), 'BorrowerLastName'],
+                    [Sequelize.fn('CONCAT', Sequelize.col('Borrower.fname'), ' ', Sequelize.col('Borrower.lname')), 'BorrowerFullName'],
                     [Sequelize.col('Borrower.email'), 'email'],
                     [Sequelize.col('Borrower.contact_no'), 'contact_no'],
                     'book_id',
@@ -180,8 +179,7 @@ const borrowedBookService = {
                 attributes: [
                     ['bb_id', 'BorrowedBookID'],
                     'borrower_id',
-                    [Sequelize.col('Borrower.fname'), 'BorrowerFirstName'],
-                    [Sequelize.col('Borrower.lname'), 'BorrowerLastName'],
+                    [Sequelize.fn('CONCAT', Sequelize.col('Borrower.fname'), ' ', Sequelize.col('Borrower.lname')), 'BorrowerFullName'],
                     [Sequelize.col('Borrower.email'), 'email'],
                     [Sequelize.col('Borrower.contact_no'), 'contact_no'],
                     'book_id',
@@ -281,23 +279,34 @@ const borrowedBookService = {
         let transaction;
         try {
             transaction = await Sequelize.transaction();
-
+    
             const borrowedBook = await BorrowedBook.findOne({
                 where: { bb_id: bb_id },
                 transaction, // Ensure part of the transaction
             });
-
+    
             if (!borrowedBook) {
-                console.error('Borrowed book not found');
+                throw new Error('Borrowed book not found');
             }
-
+    
             if (borrowedBook.isReturned) {
-                console.error('This book has already been returned');
+                throw new Error('This book has already been returned');
             }
-
-            const { book_id } = borrowedBook;
+    
+            const { borrower_id, book_id } = borrowedBook;
+    
+            // Check if the borrower has any outstanding fines
+            const outstandingFines = await Fine.findOne({
+                where: { borrower_id: borrower_id, isPaid: false },  // Assuming there's a 'paid' field
+                transaction, // Ensure part of the transaction
+            });
+    
+            if (outstandingFines) {
+                throw new Error('Cannot mark book as returned. Outstanding fines must be paid first.');
+            }
+    
             const currentDate = dayjs().format('YYYY-MM-DD');
-
+    
             await BorrowedBook.update(
                 {
                     isReturned: true,
@@ -305,20 +314,22 @@ const borrowedBookService = {
                 },
                 { where: { bb_id: bb_id }, transaction }
             );
-
+    
             await Book.update(
                 { available_qty: Sequelize.literal('available_qty + 1') },
                 { where: { book_id: book_id }, transaction }
             );
-
+    
             // Commit the transaction
             await transaction.commit();
+            return borrowedBook;
         } catch (error) {
             if (transaction) await transaction.rollback();
             console.error('Error in returnBook:', error.message);
             throw error;
         }
     }
+    
 };
 
 module.exports = borrowedBookService;

@@ -1,4 +1,4 @@
-import { ChevronFirst, ChevronLast, MoreVertical, Home, DollarSign, BookAIcon, User } from "lucide-react";
+import { ChevronFirst, ChevronLast, MoreVertical, Home, DollarSign, BookAIcon, User, BookMinus } from "lucide-react";
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import logo from "../assets/ReadRealm.jpg";
@@ -7,7 +7,7 @@ import logoIcon from "../assets/icon.jpg"; // Fixed the file extension here
 const menuItems = [
   { label: "Dashboard", icon: Home, path: "/" },
   { label: "Books", icon: BookAIcon, path: "/books" },
-  { label: "Borrowers", icon: User, path: "/borrowers" },
+  { label: "Borrowed Books", icon: BookMinus, path: "/borrowed-books" },
   { label: "Fines", icon: DollarSign, path: "/fines" },
 ];
 

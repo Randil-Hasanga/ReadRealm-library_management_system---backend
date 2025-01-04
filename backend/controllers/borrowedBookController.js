@@ -55,8 +55,8 @@ const borrowedBookController = {
     returnBook: async (req, res) => {
         try {
             const bb_id = req.params.id;
-            await borrowedBookService.returnBook(bb_id);
-            res.status(200).json({ message: 'Borrowed book returned' });
+            const book = await borrowedBookService.returnBook(bb_id);
+            res.status(200).json({ message: 'Borrowed book returned', data: book});
         } catch (error) {
             console.error('Error in returnBook controller:', error.message);
             res.status(400).json({ message: 'Return failed', error: error.message });
