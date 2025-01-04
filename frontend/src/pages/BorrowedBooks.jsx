@@ -11,7 +11,6 @@ const BorrowedBooks = () => {
     const [selectedBorrowedBook, setSelectedBorrowedBook] = useState(null);
     const [isReturnDialogOpen, setIsReturnDialogOpen] = useState(false);
 
-    const fine_error = "Cannot mark book as returned. Outstanding fines must be paid first.";
 
     // Fetch books from the API on initial load
     useEffect(() => {

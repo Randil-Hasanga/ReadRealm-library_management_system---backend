@@ -279,34 +279,23 @@ const borrowedBookService = {
         let transaction;
         try {
             transaction = await Sequelize.transaction();
-    
+
             const borrowedBook = await BorrowedBook.findOne({
                 where: { bb_id: bb_id },
                 transaction, // Ensure part of the transaction
             });
-    
+
             if (!borrowedBook) {
                 throw new Error('Borrowed book not found');
             }
-    
+
             if (borrowedBook.isReturned) {
                 throw new Error('This book has already been returned');
             }
-    
-            const { borrower_id, book_id } = borrowedBook;
-    
-            // Check if the borrower has any outstanding fines
-            const outstandingFines = await Fine.findOne({
-                where: { borrower_id: borrower_id, isPaid: false },  // Assuming there's a 'paid' field
-                transaction, // Ensure part of the transaction
-            });
-    
-            if (outstandingFines) {
-                throw new Error('Cannot mark book as returned. Outstanding fines must be paid first.');
-            }
-    
+
+            const { book_id } = borrowedBook;
             const currentDate = dayjs().format('YYYY-MM-DD');
-    
+
             await BorrowedBook.update(
                 {
                     isReturned: true,
@@ -314,12 +303,12 @@ const borrowedBookService = {
                 },
                 { where: { bb_id: bb_id }, transaction }
             );
-    
+
             await Book.update(
                 { available_qty: Sequelize.literal('available_qty + 1') },
                 { where: { book_id: book_id }, transaction }
             );
-    
+
             // Commit the transaction
             await transaction.commit();
             return borrowedBook;
