@@ -7,6 +7,7 @@ import AddBookModal from "../models/books/AddBookModal";
 import UpdateBookModal from "../models/books/UpdateBookModal";
 import DeleteConfirmationDialog from "../components/DeleteConfirmationDialog";
 import ReturnConfirmationDialog from "../components/ReturnConfirmationDialog";
+import Pagination from "../components/Pagination"; // Import Pagination Component
 
 const Books = () => {
   const [books, setBooks] = useState([]);
@@ -109,7 +110,7 @@ const Books = () => {
       console.log("Book Deleted:", response);
 
       if(typeof(response) == 'string'){
-        //show a popup message window to say some one still borrowed the book
+        //show a popup message window to say someone still borrowed the book
         alert(response);
         return;
       }
@@ -125,14 +126,13 @@ const Books = () => {
     }
   };
 
-  
-
   // Pagination Logic
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentBooks = books.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(books.length / itemsPerPage);
 
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  const handlePageChange = (pageNumber) => setCurrentPage(pageNumber);
 
   // Table columns for books
   const columns = [
@@ -161,8 +161,6 @@ const Books = () => {
     </>
   );
 
-  const totalPages = Math.ceil(books.length / itemsPerPage);
-
   return (
     <div className="p-8 bg-gray-200 min-h-screen">
       {loading && <Loader />}
@@ -188,34 +186,11 @@ const Books = () => {
 
       <Table columns={columns} data={currentBooks} renderActions={renderActions} />
 
-      <div className="flex justify-end mt-6">
-        <button
-          className="bg-gray-300 text-gray-700 px-4 py-2 rounded-md mr-2"
-          onClick={() => paginate(currentPage - 1)}
-          disabled={currentPage === 1}
-        >
-          Prev
-        </button>
-        {[...Array(totalPages)].map((_, index) => (
-          <button
-            key={index}
-            className={`px-4 py-2 rounded-md mx-1 ${currentPage === index + 1
-              ? "bg-orange-500 text-white"
-              : "bg-gray-300 text-gray-700"
-              }`}
-            onClick={() => paginate(index + 1)}
-          >
-            {index + 1}
-          </button>
-        ))}
-        <button
-          className="bg-gray-300 text-gray-700 px-4 py-2 rounded-md ml-2"
-          onClick={() => paginate(currentPage + 1)}
-          disabled={currentPage === totalPages}
-        >
-          Next
-        </button>
-      </div>
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+      />
 
       <AddBookModal
         isOpen={isAddBookModalOpen}
