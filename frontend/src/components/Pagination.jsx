@@ -1,4 +1,4 @@
-const Pagination = ({ currentPage, totalPages, onPageChange }) => {
+const Pagination = ({ currentPage, totalPages, onPageChange, isImportant }) => {
     const range = [];
     const start = Math.max(1, currentPage - 2);
     const end = Math.min(totalPages, currentPage + 2);
@@ -29,9 +29,14 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
             {range.map((page, index) => (
                 <button
                     key={index}
-                    className={`px-4 py-2 rounded-md mx-1 ${page === currentPage
-                        ? "bg-orange-500 text-white"
-                        : page === "..." ? "bg-transparent text-gray-500 cursor-default" : "bg-gray-300 text-gray-700"
+                    className={`px-4 py-2 rounded-md mx-1 
+                        ${(page === currentPage) && isImportant
+                            ? "bg-red-500 text-white"
+                            : page === "..." ? "bg-transparent text-gray-500 cursor-default" : "bg-gray-300 text-gray-700"
+                        }
+                        ${page === currentPage
+                            ? "bg-orange-500 text-white"
+                            : page === "..." ? "bg-transparent text-gray-500 cursor-default" : "bg-gray-300 text-gray-700"
                         }`}
                     onClick={() => typeof page === "number" && onPageChange(page)}
                     disabled={page === "..."}

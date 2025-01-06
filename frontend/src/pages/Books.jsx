@@ -100,23 +100,23 @@ const Books = () => {
 
   const handleDeleteBookSubmit = async () => {
     if (!selectedBook) return;
-  
+
     setIsDeleting(true);
     setErrorMessage('');
     try {
       const bookId = selectedBook.book_id;
       const response = await BookService.deleteBook(bookId);
-      
+
       console.log("Book Deleted:", response);
 
-      if(typeof(response) == 'string'){
+      if (typeof (response) == 'string') {
         //show a popup message window to say someone still borrowed the book
         alert(response);
         return;
       }
 
       setBooks((prevBooks) => prevBooks.filter((book) => book.book_id !== bookId));
-      
+
       setIsDeleteDialogOpen(false);
       setSelectedBook(null);
     } catch (error) {
@@ -171,7 +171,7 @@ const Books = () => {
         <h1 className="text-3xl font-bold text-orange-600">Book Management</h1>
         <div className="flex items-center">
           <button
-            className="bg-orange-500 shadow-md text-white px-4 py-2 rounded-md mr-4 font-semibold"
+            className="bg-orange-300 shadow-md text-slate-600 px-4 py-2 rounded-md mr-4 font-bold"
             onClick={handleAddBookClick}
           >
             Add Book

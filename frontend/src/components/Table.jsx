@@ -1,9 +1,9 @@
 import PropTypes from "prop-types";
 
-const Table = ({ columns, data, renderActions }) => {
+const Table = ({ columns, data, renderActions, isImportant }) => {
   return (
     <table className="w-full bg-white shadow-md rounded-xl overflow-hidden">
-      <thead className="bg-orange-200 text-md">
+      <thead className={`text-md ${isImportant ? "bg-red-200" : "bg-orange-100"}`}>
         <tr>
           {columns.map((col, index) => (
             <th key={index} className="text-left p-4">
