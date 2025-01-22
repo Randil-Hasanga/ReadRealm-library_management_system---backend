@@ -80,6 +80,7 @@ const Books = () => {
     }
   };
 
+  // method to handle update book
   const handleUpdateBookSubmit = async (updatedBook) => {
     try {
       const bookId = selectedBook.book_id;
