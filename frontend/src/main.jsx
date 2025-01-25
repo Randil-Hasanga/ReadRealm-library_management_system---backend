@@ -6,11 +6,13 @@ import App from './App';
 import Dashboard from './pages/Dashboard';
 import Books from './pages/Books';
 import BorrowedBooks from './pages/BorrowedBooks';
+import Fines from './pages/Fines';
 
 const router = createBrowserRouter([
   { path: '/', element: (<App><Dashboard /></App>), },
   { path: '/books', element: (<App><Books /></App>), },
-  { path: '/borrowed-books', element: (<App><BorrowedBooks /></App>), }
+  { path: '/borrowed-books', element: (<App><BorrowedBooks /></App>), },
+  { path: '/fines', element: (<App><Fines /></App>), }
 ]);
 
 createRoot(document.getElementById('root')).render(

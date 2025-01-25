@@ -6,7 +6,8 @@ const fineService = {
             attributes: [
                 'fine_id',
                 'book_id',
-                [Sequelize.col('Book.book_name'), 'Book Name'],
+                'fine_amount',
+                [Sequelize.col('Book.book_name'), 'Book_Name'],
                 'borrower_id',
                 [Sequelize.fn('CONCAT', Sequelize.col('Borrower.fname'), ' ', Sequelize.col('Borrower.lname')), 'BorrowerFullName'],
                 [Sequelize.col('Borrower.address'), 'BorrowerAddress'],
@@ -46,7 +47,7 @@ const fineService = {
             attributes: [
                 'fine_id',
                 'book_id',
-                [Sequelize.col('Book.book_name'), 'Book Name'],
+                [Sequelize.col('Book.book_name'), 'Book_Name'],
                 'borrower_id',
                 [Sequelize.fn('CONCAT', Sequelize.col('Borrower.fname'), ' ', Sequelize.col('Borrower.lname')), 'BorrowerFullName'],
                 [Sequelize.col('Borrower.address'), 'BorrowerAddress'],
@@ -86,7 +87,7 @@ const fineService = {
             attributes: [
                 'fine_id',
                 'book_id',
-                [Sequelize.col('Book.book_name'), 'Book Name'],
+                [Sequelize.col('Book.book_name'), 'Book_Name'],
                 'borrower_id',
                 [Sequelize.fn('CONCAT', Sequelize.col('Borrower.fname'), ' ', Sequelize.col('Borrower.lname')), 'BorrowerFullName'],
                 [Sequelize.col('Borrower.address'), 'BorrowerAddress'],
