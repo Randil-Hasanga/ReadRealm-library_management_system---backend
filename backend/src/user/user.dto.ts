@@ -32,5 +32,5 @@ export class UserDto{
     position: string;
 
     @IsBoolean()
-    isActive: boolean;
+    isActive: boolean = true;
 }

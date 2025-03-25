@@ -39,4 +39,18 @@ export class UserService {
         }
         return await User.findOne({ where: { user_id: id } });
     }
+
+    async updateUserById(id: number, updatedFields: any) {
+        const user = await User.findOne({ where: { user_id: id } });
+        if (!user) {
+            console.error('User not found');
+        }
+        const [effectedRows] = await User.update(updatedFields, { where: { user_id: id } });
+
+        if (effectedRows === 0) {
+            console.error('Failed to update user');
+        }
+
+        return await User.findOne({ where: { user_id: id } });
+    }
 }
