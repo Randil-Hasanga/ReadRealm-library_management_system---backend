@@ -4,7 +4,7 @@ import { UserDto } from './user.dto';
 
 @Injectable()
 export class UserService {
-    
+
     async getUsers() {
         const users = await User.findAll();
         return users;
@@ -26,5 +26,17 @@ export class UserService {
             console.error('User not found');
         }
         return user;
+    }
+
+    async deleteAndRestoreUser(id: number, isActive: boolean) {
+        const user = await User.findOne({ where: { user_id: id } });
+        if (!user) {
+            console.error('User not found');
+        }
+        const [effectedRows] = await User.update({ isActive: isActive }, { where: { user_id: id } });
+        if (effectedRows === 0) {
+            console.error('Failed to update user');
+        }
+        return await User.findOne({ where: { user_id: id } });
     }
 }

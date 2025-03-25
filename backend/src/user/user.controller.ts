@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Req, Res, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Req, Res, UsePipes, ValidationPipe } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserDto } from './user.dto';
 
@@ -31,6 +31,17 @@ export class UserController {
         try {
             const user = await this.userService.getUserById(user_id);
             res.status(200).json({ message: 'User fetched successfully', data: user });
+        } catch (error) {
+            res.status(500).json({ message: 'Error fetching user', error: error.message });
+        }
+    }
+
+    @Delete(':id/delete-or-restore')
+    async deleteOrRestoreUserById (@Param('id') user_id, @Body() userData : UserDto, @Res() res) {
+        const isActive = userData.isActive;
+        try {
+            const updatedUser = await this.userService.deleteAndRestoreUser(user_id, isActive);
+            res.status(200).json({ message: 'User updated successfully', data: updatedUser });
         } catch (error) {
             res.status(500).json({ message: 'Error fetching user', error: error.message });
         }
