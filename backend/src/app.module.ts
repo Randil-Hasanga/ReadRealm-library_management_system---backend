@@ -9,12 +9,15 @@ import { BookModule } from './book/book.module';
 import { BookService } from './book/book.service';
 import { AuthorModule } from './author/author.module';
 import { AuthorService } from './author/author.service';
+import { BorrowedbooksModule } from './borrowedbooks/borrowedbooks.module';
+import { BorrowedbooksService } from './borrowedbooks/borrowedbooks.service';
+import { BorrowerModule } from './borrower/borrower.module';
 
 @Module({
   imports: [ConfigModule.forRoot({
     isGlobal: true
-  }),UserModule, BookModule, AuthorModule],
+  }),UserModule, BookModule, AuthorModule, BorrowedbooksModule, BorrowerModule],
   controllers: [AppController, UserController],
-  providers: [AppService, UserService, BookService, AuthorService],
+  providers: [AppService, UserService, BookService, AuthorService, BorrowedbooksService],
 })
 export class AppModule {}

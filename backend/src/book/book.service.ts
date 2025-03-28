@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import models from '../models/index';
 import Book from 'src/models/Book';
 import Author from 'src/models/Author';
-import BooksArchive from 'src/models/BooksArchive';
 
 const { Sequelize } = models;
 
