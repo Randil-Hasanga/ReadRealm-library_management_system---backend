@@ -1,14 +1,14 @@
-import { Body, Controller, Get, Param, Post, Res } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Res } from '@nestjs/common';
 import { BorrowedbooksService } from './borrowedbooks.service';
 import { BorrwedBookDTO } from './borrowedbooks.dto';
 
-@Controller('borrowed-book')
+@Controller('borrowed-books')
 export class BorrowedbooksController {
 
     constructor(private readonly borrowedBooksService: BorrowedbooksService) { }
 
     @Post()
-    async insertBorrowedBook(@Res() res, @Body() borrowedBookData : BorrwedBookDTO)  {
+    async insertBorrowedBook(@Res() res, @Body() borrowedBookData: BorrwedBookDTO) {
         try {
             const newBorrowedBook = await this.borrowedBooksService.insertBorrowedBook(borrowedBookData);
             res.status(201).json({ message: 'Borrowed book inserted', data: newBorrowedBook });
@@ -27,13 +27,57 @@ export class BorrowedbooksController {
         }
     }
 
-    @Get(':id')
-    async getBorrowedBookById(@Param('id') id, @Res() res) {
+    @Get('over-due')
+    async getOverDueBooks(@Res() res) {
         try {
-            const books = await this.borrowedBooksService.getBorrowedBookById(id);
-            res.status(201).json({ message: 'Borrowed books', data: books });
+            const books = await this.borrowedBooksService.getOverDueBooks();
+            res.status(201).json({ message: 'Over due books', data: books });
         } catch (error) {
             res.status(501).json({ message: 'retrieval failed', error: error.message });
         }
     }
+
+    @Get(':id')
+    async getBorrowedBookById(@Param('id') id, @Res() res) {
+        try {
+            const books = await this.borrowedBooksService.getBorrowedBookById(id);
+            res.status(201).json({ message: 'Borrowed books by id', data: books });
+        } catch (error) {
+            res.status(501).json({ message: 'retrieval failed', error: error.message });
+        }
+    }
+
+    @Get('books/:id')
+    async getBorrowedBooksByBookId(@Param('id') id, @Res() res) {
+        try {
+            const books = await this.borrowedBooksService.getBorrowedBooksByBookId(id);
+            res.status(201).json({ message: 'Borrowed books by book id', data: books });
+        } catch (error) {
+            res.status(501).json({ message: 'retrieval failed', error: error.message });
+        }
+    }
+
+    @Get('borrower/:id')
+    async getBorrowedBooksByBorrowerId(@Param('id') id, @Res() res) {
+        try {
+            const books = await this.borrowedBooksService.getBorrowedBooksByBorrowerId(id);
+            res.status(201).json({ message: 'Borrowed books by borrower id', data: books });
+        } catch (error) {
+            res.status(501).json({ message: 'retrieval failed', error: error.message });
+        }
+    }
+
+    @Patch('return/:id')
+    async returnBook(@Param('id') bb_id, @Res() res)  {
+        try {
+            const book = await this.borrowedBooksService.returnBook(bb_id);
+            res.status(200).json({ message: 'Borrowed book returned', data: book});
+        } catch (error) {
+            console.error('Error in returnBook controller:', error.message);
+            res.status(400).json({ message: 'Return failed', error: error.message });
+        }
+        
+    }
+
+
 }

@@ -1,7 +1,19 @@
+import { Model, DataTypes } from 'sequelize';
 import sequelize from '../../db';
-import { DataTypes } from 'sequelize';
 
-const BorrowedBook = sequelize.define('BorrowedBook', {
+export interface BorrowedBookAttributes {
+    bb_id: number;
+    borrower_id: number;
+    book_id: number;
+    borrowed_date: Date;
+    return_date: Date;
+    returned_date?: Date | null;
+    isReturned: boolean;
+}
+
+export interface BorrowedBookInstance extends Model<BorrowedBookAttributes>, BorrowedBookAttributes {}
+
+const BorrowedBook = sequelize.define<BorrowedBookInstance>('BorrowedBook', {
     bb_id: {
         type: DataTypes.INTEGER,
         primaryKey: true,

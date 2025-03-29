@@ -4,8 +4,10 @@ import BorrowedBook from 'src/models/BorrowedBook';
 import Borrower from 'src/models/Borrower';
 import models from '../models/index';
 const { Op } = require('sequelize');
+const dayjs = require('dayjs');
 
 const { Sequelize } = models;
+
 
 @Injectable()
 export class BorrowedbooksService {
@@ -151,6 +153,189 @@ export class BorrowedbooksService {
             return books;
         } catch (error) {
             console.error('Error fetching borrowed books:', error.message);
+            throw error;
+        }
+    }
+
+    async getBorrowedBooksByBookId(book_id) {
+        try {
+            const books = await BorrowedBook.findAll({
+                attributes: [
+                    'book_id',
+                    ['bb_id', 'BorrowedBookID'],
+                    'borrower_id',
+                    [Sequelize.fn('CONCAT', Sequelize.col('Borrower.fname'), ' ', Sequelize.col('Borrower.lname')), 'BorrowerFullName'],
+                    [Sequelize.col('Borrower.email'), 'email'],
+                    [Sequelize.col('Borrower.contact_no'), 'contact_no'],
+                    [Sequelize.col('Book.book_name'), 'BookName'],
+                    'borrowed_date',
+                    'return_date',
+                    'isReturned'
+                ],
+                include: [
+                    {
+                        model: Borrower,
+                        as: 'borrower',
+                        attributes: [] // Fetch only the required fields via Sequelize.col
+                    },
+                    {
+                        model: Book,
+                        as: 'book',
+                        attributes: [] // Fetch only the required fields via Sequelize.col
+                    }
+                ],
+                raw: true, // Ensures plain JavaScript object results
+                where: { book_id: book_id }
+            });
+
+            if (!books || books.length === 0) {
+                console.error('No borrowed books found');
+            }
+
+            return books;
+        } catch (error) {
+            console.error('Error fetching borrowed books:', error.message);
+            throw error;
+        }
+    }
+
+    async getBorrowedBooksByBorrowerId(borrower_id) {
+        try {
+            const books = await BorrowedBook.findAll({
+                attributes: [
+                    'borrower_id',
+                    ['bb_id', 'BorrowedBookID'],
+                    [Sequelize.fn('CONCAT', Sequelize.col('Borrower.fname'), ' ', Sequelize.col('Borrower.lname')), 'BorrowerFullName'],
+                    [Sequelize.col('Borrower.email'), 'email'],
+                    [Sequelize.col('Borrower.contact_no'), 'contact_no'],
+                    'book_id',
+                    [Sequelize.col('Book.book_name'), 'BookName'],
+                    'borrowed_date',
+                    'return_date',
+                    'isReturned'
+                ],
+                include: [
+                    {
+                        model: Borrower,
+                        as: 'borrower',
+                        attributes: [] // Fetch only the required fields via Sequelize.col
+                    },
+                    {
+                        model: Book,
+                        as: 'book',
+                        attributes: [] // Fetch only the required fields via Sequelize.col
+                    }
+                ],
+                raw: true, // Ensures plain JavaScript object results
+                where: { borrower_id: borrower_id }
+            });
+
+            if (!books || books.length === 0) {
+                console.error('No borrowed books found');
+            }
+
+            return books;
+        } catch (error) {
+            console.error('Error fetching borrowed books:', error.message);
+            throw error;
+        }
+    }
+
+    async getOverDueBooks() {
+        try {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            const books = await BorrowedBook.findAll({
+                attributes: [
+                    ['bb_id', 'BorrowedBookID'],
+                    'borrower_id',
+                    [Sequelize.fn('CONCAT', Sequelize.col('Borrower.fname'), ' ', Sequelize.col('Borrower.lname')), 'BorrowerFullName'],
+                    [Sequelize.col('Borrower.email'), 'email'],
+                    [Sequelize.col('Borrower.contact_no'), 'contact_no'],
+                    'book_id',
+                    [Sequelize.col('Book.book_name'), 'BookName'],
+                    'borrowed_date',
+                    'return_date',
+                    'isReturned'
+                ],
+                include: [
+                    {
+                        model: Borrower,
+                        as: 'borrower',
+                        attributes: [] // Fetch only the required fields via Sequelize.col
+                    },
+                    {
+                        model: Book,
+                        as: 'book',
+                        attributes: [] // Fetch only the required fields via Sequelize.col
+                    }
+                ],
+                raw: true, // Ensures plain JavaScript object results
+                where: {
+                    isReturned: false,
+                    return_date: {
+                        [Op.lt]: today
+                    }
+                }
+            });
+
+            if (!books || books.length === 0) {
+                console.error('No over due books found');
+            }
+
+            return books;
+        } catch (error) {
+            console.error('Error fetching borrowed books:', error.message);
+            throw error;
+        }
+    }
+
+    async returnBook(bb_id: number) {
+        let transaction;
+        try {
+            transaction = await Sequelize.transaction();
+
+            const borrowedBook = await BorrowedBook.findOne({
+                where: { bb_id: bb_id },
+                transaction, // Ensure part of the transaction
+            });
+
+            if (!borrowedBook) {
+                throw new Error('Borrowed book not found');
+            }
+
+            if (borrowedBook.isReturned) {
+                throw new Error('This book has already been returned');
+            }
+
+            const { book_id } = borrowedBook;
+            const currentDate = dayjs().format('YYYY-MM-DD');
+            console.log(currentDate)
+
+            await BorrowedBook.update(
+                {
+                    isReturned: true,
+                    returned_date: currentDate
+                },
+                { where: { bb_id: bb_id }, transaction }
+            );
+
+            await Book.update(
+                { available_qty: Sequelize.literal('available_qty + 1') },
+                { where: { book_id: book_id }, transaction }
+            );
+
+            // Commit the transaction
+            await transaction.commit();
+
+            const updatedBook = await BorrowedBook.findOne({
+                where: { bb_id: bb_id }
+            });
+            return updatedBook;
+        } catch (error) {
+            if (transaction) await transaction.rollback();
+            console.error('Error in returnBook:', error.message);
             throw error;
         }
     }
