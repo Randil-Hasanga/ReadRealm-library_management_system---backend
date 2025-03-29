@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Req, Res } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Req, Res, UsePipes, ValidationPipe } from '@nestjs/common';
 import { BookService } from './book.service';
 import { BookDto } from './book.dto';
 
@@ -8,6 +8,7 @@ export class BookController {
     constructor(private readonly bookService: BookService) { }
 
     @Post()
+    @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
     async createBook(@Body() bookData: BookDto, @Res() res) {
         try {
             const newBook = await this.bookService.createBook(bookData)
@@ -58,6 +59,7 @@ export class BookController {
     }
 
     @Patch(':id')
+    @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
     async updateBook(@Param('id') book_id, @Res() res, @Body() updatedBookData : BookDto) {
         try {
             const updatedBook = await this.bookService.updateBook(book_id, updatedBookData);

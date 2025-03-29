@@ -5,7 +5,6 @@ import BorrowedBook from './BorrowedBook';
 import Author from './Author';
 import Fine from './Fine';
 import User from './User';
-import BooksArchive from './BooksArchive';
 
     Borrower.hasMany(BorrowedBook, { foreignKey: 'borrower_id', as: 'borrowedBooks' });
     BorrowedBook.belongsTo(Borrower, { foreignKey: 'borrower_id', as: 'borrower' });
@@ -24,8 +23,6 @@ import BooksArchive from './BooksArchive';
 
     Borrower.hasMany(Fine, { foreignKey: 'borrower_id', as: 'fines' });
     Fine.belongsTo(Borrower, { foreignKey: 'borrower_id', as: 'borrower' });
-
-    BooksArchive.belongsTo(Author, { foreignKey: 'author_id', as: 'author' });
 
 export default {
     Sequelize,

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, Res } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Res, UsePipes, ValidationPipe } from '@nestjs/common';
 import { BorrowedbooksService } from './borrowedbooks.service';
 import { BorrwedBookDTO } from './borrowedbooks.dto';
 
@@ -8,6 +8,7 @@ export class BorrowedbooksController {
     constructor(private readonly borrowedBooksService: BorrowedbooksService) { }
 
     @Post()
+    @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
     async insertBorrowedBook(@Res() res, @Body() borrowedBookData: BorrwedBookDTO) {
         try {
             const newBorrowedBook = await this.borrowedBooksService.insertBorrowedBook(borrowedBookData);

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, Res } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Res, UsePipes, ValidationPipe } from '@nestjs/common';
 import { AuthorDto } from './author.dto';
 import { AuthorService } from './author.service';
 
@@ -8,6 +8,7 @@ export class AuthorController {
     constructor(private readonly authorService : AuthorService) {}
 
     @Post()
+    @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
     async createAuthor(@Body() authorData : AuthorDto, @Res() res) {
         try {
             const newAuthor = await this.authorService.createAuthor(authorData);
@@ -38,6 +39,7 @@ export class AuthorController {
     }
 
     @Patch(':id')
+    @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
     async updateAuthor(@Param('id') id, @Body() updatedAuthor : AuthorDto, @Res() res) {
         const author_name = updatedAuthor.author_name;
 

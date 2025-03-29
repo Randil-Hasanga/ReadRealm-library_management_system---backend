@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Res } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Res, UsePipes, ValidationPipe } from '@nestjs/common';
 import { BorrowerDTO } from './borrower.dto';
 import { BorrowerService } from './borrower.service';
 
@@ -8,6 +8,7 @@ export class BorrowerController {
     constructor(private readonly borrowerService : BorrowerService) {}
 
     @Post()
+    @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
     async createBorrower(@Res() res, @Body() borrowerData : BorrowerDTO) {
         try {
             const new_borrower = await this.borrowerService.createBorrower(borrowerData);
@@ -38,6 +39,7 @@ export class BorrowerController {
     }
 
     @Patch(':id')
+    @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
     async updateBorrower(@Param('id') borrower_id,@Body() updatedBorrower : BorrowerDTO, @Res() res) {
         try {
             const effectedRows = await this.borrowerService.updateBorrower(borrower_id, updatedBorrower);
