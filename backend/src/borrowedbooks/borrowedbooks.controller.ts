@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Res } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Res } from '@nestjs/common';
 import { BorrowedbooksService } from './borrowedbooks.service';
 import { BorrwedBookDTO } from './borrowedbooks.dto';
 
@@ -21,6 +21,16 @@ export class BorrowedbooksController {
     async getBorrowedBooks(@Res() res) {
         try {
             const books = await this.borrowedBooksService.getBorrowedBooks();
+            res.status(201).json({ message: 'Borrowed books', data: books });
+        } catch (error) {
+            res.status(501).json({ message: 'retrieval failed', error: error.message });
+        }
+    }
+
+    @Get(':id')
+    async getBorrowedBookById(@Param('id') id, @Res() res) {
+        try {
+            const books = await this.borrowedBooksService.getBorrowedBookById(id);
             res.status(201).json({ message: 'Borrowed books', data: books });
         } catch (error) {
             res.status(501).json({ message: 'retrieval failed', error: error.message });
