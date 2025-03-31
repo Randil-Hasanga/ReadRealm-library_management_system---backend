@@ -1,7 +1,22 @@
 import sequelize from '../../db';
-import { DataTypes } from 'sequelize';
+import { DataTypes, Model } from 'sequelize';
 
-const User = sequelize.define('User', {
+export interface UserAttributes {
+    user_id: number;
+    fname: string;
+    lname: string;
+    address: string;
+    NIC: string;
+    email: string;
+    password: string;
+    contact_no: string;
+    position: string;
+    isActive: boolean
+}
+
+export interface UserInstance extends Model<UserAttributes>, UserAttributes{}
+
+const User = sequelize.define<UserInstance>('User', {
     //define columns
     user_id: {
         type: DataTypes.INTEGER,

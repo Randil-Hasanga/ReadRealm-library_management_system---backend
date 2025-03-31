@@ -1,26 +1,33 @@
 import { Injectable } from '@nestjs/common';
 import User from 'src/models/User';
+import * as bcrypt from 'bcrypt';
+import { UserDto } from './user.dto';
 
 @Injectable()
 export class UserService {
 
     async getUsers() {
-        const users = await User.findAll();
+        const users = await User.findAll({attributes: {exclude:['password']}});
         return users;
     }
 
-    async createUser(data: any) {
-        const { email } = data;
+    async createUser(data: UserDto) {
+        const { email, password, ...otherData } = data;
         const existingUser = await User.findOne({ where: { email } });
         if (existingUser) {
-            console.error('Email is already exist');
+            throw new Error('Email already exists');
         }
-        const newUser = await User.create(data);
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const newUser = await User.create({
+            email,
+            password: hashedPassword, 
+            ...otherData
+        });
         return newUser;
     }
 
     async getUserById(id: number) {
-        const user = await User.findOne({ where: { user_id: id } });
+        const user = await User.findOne({ where: { user_id: id }, attributes: {exclude:['password']}});
         if (!user) {
             console.error('User not found');
         }
