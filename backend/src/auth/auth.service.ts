@@ -2,23 +2,22 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { AuthPayload } from './dto/auth.dto';
 import User from 'src/models/User';
 import * as bcrypt from 'bcrypt';
-import { error } from 'console';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
+
+    constructor(private jwtService: JwtService) { }
+
     async validateUser({ email, password }: AuthPayload) {
         const user = await User.findOne({ where: { email: email } });
-        if (!user) {
-            throw new HttpException("Authentication failed: User not found", HttpStatus.UNAUTHORIZED);
-        }
+        if (!user) return null;
         const isPasswordValid = await bcrypt.compare(password, user.password)
         if (!isPasswordValid) {
-            throw new HttpException("Authentication failed: Incorrect password", HttpStatus.UNAUTHORIZED);
+            return "invalid";
+        }else{
+            const {password, ...otherFields} = user;
+            return this.jwtService.sign(otherFields);
         }
-
-        return {
-            message: "Authenticated",
-            user: { id: user.user_id, email: user.email } // Exclude password from response
-        };
     }
 }

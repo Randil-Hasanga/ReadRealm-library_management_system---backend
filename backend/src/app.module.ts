@@ -16,12 +16,13 @@ import { FineModule } from './fine/fine.module';
 import { FineService } from './fine/fine.service';
 import { AuthModule } from './auth/auth.module';
 import { AuthService } from './auth/auth.service';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
   imports: [ConfigModule.forRoot({
     isGlobal: true
   }),UserModule, BookModule, AuthorModule, BorrowedbooksModule, BorrowerModule, FineModule, AuthModule],
   controllers: [AppController, UserController],
-  providers: [AppService, UserService, BookService, AuthorService, BorrowedbooksService, FineService, AuthService],
+  providers: [AppService, UserService, BookService, AuthorService, BorrowedbooksService, FineService, AuthService, JwtService],
 })
 export class AppModule {}
