@@ -1,6 +1,7 @@
-import { Body, Controller, Get, Param, Patch, Post, Res, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Res, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { AuthorDto } from './author.dto';
 import { AuthorService } from './author.service';
+import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 
 @Controller('authors')
 export class AuthorController {
@@ -19,6 +20,7 @@ export class AuthorController {
     }
 
     @Get()
+    @UseGuards(JwtAuthGuard)
     async getAuthors(@Res() res) {
         try {
             const authors = await this.authorService.getAuthors();

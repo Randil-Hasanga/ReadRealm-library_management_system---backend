@@ -13,11 +13,10 @@ export class AuthService {
         const user = await User.findOne({ where: { email: email } });
         if (!user) return null;
         const isPasswordValid = await bcrypt.compare(password, user.password)
-        if (!isPasswordValid) {
-            return "invalid";
-        }else{
-            const {password, ...otherFields} = user;
-            return this.jwtService.sign(otherFields);
+        if (isPasswordValid) {
+            const userWithoutPassword = user.get({ plain: true }) as Record<string, any>;
+            delete userWithoutPassword.password;
+            return this.jwtService.sign(userWithoutPassword);
         }
     }
 }

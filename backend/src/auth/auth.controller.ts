@@ -1,6 +1,10 @@
-import { Body, Controller, HttpException, HttpStatus, Post, Res } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, HttpStatus, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthPayload } from './dto/auth.dto';
 import { AuthService } from './auth.service';
+import { AuthGuard } from '@nestjs/passport';
+import { LocalGuard } from './guards/local.guard';
+import { Request } from 'express';
+import { JwtAuthGuard } from './guards/jwt.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -8,18 +12,16 @@ export class AuthController {
     constructor(private readonly authService: AuthService) { }
 
     @Post('login')
-    async login(@Body() authPayload: AuthPayload) {
-        const user = await this.authService.validateUser(authPayload);
-        if(!user){
-            throw new HttpException("Authentication failed: User not found", HttpStatus.UNAUTHORIZED);
-        }
-        if(user == 'invalid'){
-            throw new HttpException("Authentication failed: Incorrect password", HttpStatus.UNAUTHORIZED);
-        }
-        return user;
-        // res.status(HttpStatus.OK).json({
-        //     message: response.message,
-        //     user : response.user
-        // });
+    @UseGuards(LocalGuard) //IMP: when use  @UseGuards(AuthGuard('local')) same thing happens, but when use @UseGuards(LocalGuard) with LocalGuard class, can add additional logic
+    login(@Req() req : Request) {
+        return req.user;
     }
+
+    @Get('status')
+    @UseGuards(JwtAuthGuard)
+    status(@Req() req: Request){
+        console.log(req.user)
+        return req.user;
+    }
+
 }
