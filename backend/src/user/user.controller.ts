@@ -19,7 +19,6 @@ export class UserController {
     }
 
     @Post()
-    @UseGuards(JwtAuthGuard)
     @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
     async createUser(@Body() userData: UserDto) {
         return {

@@ -1,0 +1,59 @@
+  # services:
+  #   mysql_db:
+  #     image: mysql
+  #     environment:
+  #       - MYSQL_ROOT_PASSWORD=1234
+  #       - MYSQL_DATABASE=libms
+  #     ports:
+  #       - '3306:3306'
+  #   nestjs_api:
+  #     build:
+  #       context: .
+  #       dockerfile: Dockerfile
+  #     ports:
+  #       - '3000:3000'
+  #     environment:
+  #       - DB_HOST=mysql_db
+  #       - DB_USER=root
+  #       - DB_PASS=1234
+  #       - DB_NAME=libms
+  #       - PORT=3000
+  #       - JWT_SECRET=superSecretKey123!
+  #     depends_on:
+  #       - mysql_db
+  #     volumes:
+  #       - ./src:/libms/src/app/src
+
+  services:
+    mysql_db:
+      image: mysql:8.0
+      container_name: mysql_db
+      environment:
+        MYSQL_ROOT_PASSWORD: 1234
+        MYSQL_DATABASE: libms
+      ports:
+        - "3307:3306"
+      volumes:
+        - mysql_data:/var/lib/mysql
+
+    nestjs_api:
+      build:
+        context: .
+        dockerfile: Dockerfile
+      container_name: nestjs_api
+      ports:
+        - "3000:3000"
+      environment:
+        DB_HOST: mysql_db
+        DB_USER: root
+        DB_PASS: 1234
+        DB_NAME: libms
+        PORT: 3000
+        JWT_SECRET: superSecretKey123!
+      depends_on:
+        - mysql_db
+      volumes:
+        - ./src:/libms/src/app/src
+
+  volumes:
+    mysql_data:
