@@ -1,12 +1,14 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post, Req, Res, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post, Req, Res, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserDto } from './user.dto';
+import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 
 @Controller('users')
 export class UserController {
     constructor(private readonly userService: UserService) {}
 
     @Get()
+    @UseGuards(JwtAuthGuard)
     async getUsers(@Res() res) {
         try {
             const users = await this.userService.getUsers();
@@ -17,6 +19,7 @@ export class UserController {
     }
 
     @Post()
+    @UseGuards(JwtAuthGuard)
     @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
     async createUser(@Body() userData: UserDto) {
         return {
@@ -26,6 +29,7 @@ export class UserController {
     }
 
     @Get(':id')
+    @UseGuards(JwtAuthGuard)
     async getUserById (@Param('id') user_id, @Res() res) {
         
         try {
@@ -37,6 +41,7 @@ export class UserController {
     }
 
     @Delete(':id/delete-or-restore')
+    @UseGuards(JwtAuthGuard)
     async deleteOrRestoreUserById (@Param('id') user_id, @Body() userData : UserDto, @Res() res) {
         const isActive = userData.isActive;
         try {
@@ -48,6 +53,7 @@ export class UserController {
     }
 
     @Patch(':id/update')
+    @UseGuards(JwtAuthGuard)
     async updateUserById(@Param('id') userId, @Body() updatedUserData: UserDto, @Res() res){
         try {
             const updatedUser = await this.userService.updateUserById(userId, updatedUserData);
