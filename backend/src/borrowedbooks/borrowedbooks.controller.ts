@@ -1,6 +1,7 @@
-import { Body, Controller, Get, Param, Patch, Post, Res, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Res, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { BorrowedbooksService } from './borrowedbooks.service';
 import { BorrwedBookDTO } from './borrowedbooks.dto';
+import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 
 @Controller('borrowed-books')
 export class BorrowedbooksController {
@@ -8,6 +9,7 @@ export class BorrowedbooksController {
     constructor(private readonly borrowedBooksService: BorrowedbooksService) { }
 
     @Post()
+    @UseGuards(JwtAuthGuard)
     @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
     async insertBorrowedBook(@Res() res, @Body() borrowedBookData: BorrwedBookDTO) {
         try {
@@ -19,6 +21,7 @@ export class BorrowedbooksController {
     }
 
     @Get()
+    @UseGuards(JwtAuthGuard)
     async getBorrowedBooks(@Res() res) {
         try {
             const books = await this.borrowedBooksService.getBorrowedBooks();
@@ -29,6 +32,7 @@ export class BorrowedbooksController {
     }
 
     @Get('over-due')
+    @UseGuards(JwtAuthGuard)
     async getOverDueBooks(@Res() res) {
         try {
             const books = await this.borrowedBooksService.getOverDueBooks();
@@ -39,6 +43,7 @@ export class BorrowedbooksController {
     }
 
     @Get(':id')
+    @UseGuards(JwtAuthGuard)
     async getBorrowedBookById(@Param('id') id, @Res() res) {
         try {
             const books = await this.borrowedBooksService.getBorrowedBookById(id);
@@ -49,6 +54,7 @@ export class BorrowedbooksController {
     }
 
     @Get('books/:id')
+    @UseGuards(JwtAuthGuard)
     async getBorrowedBooksByBookId(@Param('id') id, @Res() res) {
         try {
             const books = await this.borrowedBooksService.getBorrowedBooksByBookId(id);
@@ -59,6 +65,7 @@ export class BorrowedbooksController {
     }
 
     @Get('borrower/:id')
+    @UseGuards(JwtAuthGuard)
     async getBorrowedBooksByBorrowerId(@Param('id') id, @Res() res) {
         try {
             const books = await this.borrowedBooksService.getBorrowedBooksByBorrowerId(id);
@@ -69,6 +76,7 @@ export class BorrowedbooksController {
     }
 
     @Patch('return/:id')
+    @UseGuards(JwtAuthGuard)
     async returnBook(@Param('id') bb_id, @Res() res)  {
         try {
             const book = await this.borrowedBooksService.returnBook(bb_id);

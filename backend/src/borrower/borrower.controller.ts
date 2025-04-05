@@ -1,6 +1,7 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Res, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Res, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { BorrowerDTO } from './borrower.dto';
 import { BorrowerService } from './borrower.service';
+import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 
 @Controller('borrowers')
 export class BorrowerController {
@@ -8,6 +9,7 @@ export class BorrowerController {
     constructor(private readonly borrowerService : BorrowerService) {}
 
     @Post()
+    @UseGuards(JwtAuthGuard)
     @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
     async createBorrower(@Res() res, @Body() borrowerData : BorrowerDTO) {
         try {
@@ -19,6 +21,7 @@ export class BorrowerController {
     }
 
     @Get()
+    @UseGuards(JwtAuthGuard)
     async getBorrowers(@Res() res) {
         try {
             const borrowers = await this.borrowerService.getBorrowers();
@@ -29,6 +32,7 @@ export class BorrowerController {
     }
 
     @Get(':id')
+    @UseGuards(JwtAuthGuard)
     async getBorrowerById (@Param('id') borrower_id, @Res() res) {
         try {
             const borrower = await this.borrowerService.getBorrowerById(borrower_id);
@@ -39,6 +43,7 @@ export class BorrowerController {
     }
 
     @Patch(':id')
+    @UseGuards(JwtAuthGuard)
     @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
     async updateBorrower(@Param('id') borrower_id,@Body() updatedBorrower : BorrowerDTO, @Res() res) {
         try {
@@ -50,6 +55,7 @@ export class BorrowerController {
     }
 
     @Delete(':id/setActive/:isActive')
+    @UseGuards(JwtAuthGuard)
     async deleteOrRestoreBorrower (@Param('id') id,@Param('isActive') isActive : boolean, @Res() res)  {
         console.log(isActive)
         try {

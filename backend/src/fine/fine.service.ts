@@ -9,6 +9,7 @@ const { Sequelize } = Models;
 @Injectable()
 export class FineService {
     async getFines() {
+        await Sequelize.query('CALL sp_manage_overdue_fines();');
         const fines = await Fine.findAll({
             attributes: [
                 'fine_id',
@@ -84,7 +85,7 @@ export class FineService {
                     attributes: [] // Fetch only the required fields via Sequelize.col
                 }
             ],
-            where: {bb_id: bb_id }
+            where: { bb_id: bb_id }
         });
         if (fines && fines.length != 0) {
             return fines;
@@ -125,7 +126,7 @@ export class FineService {
                     attributes: [] // Fetch only the required fields via Sequelize.col
                 }
             ],
-            where: {fine_id: fine_id }
+            where: { fine_id: fine_id }
         });
         if (fines && fines.length != 0) {
             return fines;
@@ -134,17 +135,17 @@ export class FineService {
         }
     }
 
-    async payFine (bb_id) {
+    async payFine(fine_id) {
 
-        const fine = await Fine.findOne({ where: { bb_id: bb_id } });
+        const fine = await Fine.findOne({ where: { fine_id: fine_id } });
         if (!fine) {
             console.error('Fine not found');
         }
 
-        const [effectedRows] = await Fine.update({ isPaid: true }, { where: { bb_id: bb_id } });
+        const [effectedRows] = await Fine.update({ isPaid: true }, { where: { fine_id: fine_id } });
         if (effectedRows === 0) {
             console.error('Failed to update fine');
         }
-        return await Fine.findOne({ where: { bb_id: bb_id } });
+        return await Fine.findOne({ where: { fine_id: fine_id } });
     }
 }

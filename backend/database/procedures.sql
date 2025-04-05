@@ -13,26 +13,23 @@ BEGIN
     FROM borrowed_books bb
     WHERE 
         bb.return_date < CURDATE()
-        AND NOT EXISTS ( -- Check if the fine already exists
+        AND NOT EXISTS (
             SELECT 1
             FROM fines f
             WHERE f.bb_id = bb.bb_id
         );
 
-    -- Update existing fines if the book remains overdue and the fine is unpaid
+    -- Update existing fines if the book is still overdue and unpaid
     UPDATE fines f
     JOIN borrowed_books bb ON f.bb_id = bb.bb_id
     SET 
         f.fine_amount = DATEDIFF(CURDATE(), bb.return_date) * 20
     WHERE 
         bb.return_date < CURDATE()
-        AND f.isPaid = false
-        AND EXISTS ( -- Ensure the fine already exists
-            SELECT 1
-            FROM fines f1
-            WHERE f1.bb_id = bb.bb_id
-        );
+        AND f.isPaid = false;
 
 END$$
 
 DELIMITER ;
+
+

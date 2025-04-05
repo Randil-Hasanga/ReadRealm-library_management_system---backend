@@ -1,6 +1,7 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Req, Res, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Req, Res, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { BookService } from './book.service';
 import { BookDto } from './book.dto';
+import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 
 @Controller('books')
 export class BookController {
@@ -8,6 +9,7 @@ export class BookController {
     constructor(private readonly bookService: BookService) { }
 
     @Post()
+    @UseGuards(JwtAuthGuard)
     @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
     async createBook(@Body() bookData: BookDto, @Res() res) {
         try {
@@ -19,6 +21,7 @@ export class BookController {
     }
 
     @Get()
+    @UseGuards(JwtAuthGuard)
     async getBooks(@Res() res) {
         try {
             const books = await this.bookService.getBooks();
@@ -29,6 +32,7 @@ export class BookController {
     }
 
     @Get(':id')
+    @UseGuards(JwtAuthGuard)
     async getBookById(@Param('id') book_id, @Res() res) {
         try {
             const book = await this.bookService.getBookById(book_id);
@@ -39,6 +43,7 @@ export class BookController {
     }
 
     @Delete(':id')
+    @UseGuards(JwtAuthGuard)
     async deleteBook(@Param('id') book_id, @Res() res) {
         try {
             const effectedRows = await this.bookService.deleteBook(book_id);
@@ -49,6 +54,7 @@ export class BookController {
     }
 
     @Get('deleted/all')
+    @UseGuards(JwtAuthGuard)
     async getDeletedBooks(@Res() res) {
         try {
             const deletedBooks = await this.bookService.getDeletedBooks();
@@ -59,6 +65,7 @@ export class BookController {
     }
 
     @Patch(':id')
+    @UseGuards(JwtAuthGuard)
     @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
     async updateBook(@Param('id') book_id, @Res() res, @Body() updatedBookData : BookDto) {
         try {

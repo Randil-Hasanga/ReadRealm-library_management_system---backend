@@ -9,6 +9,7 @@ export class AuthorController {
     constructor(private readonly authorService : AuthorService) {}
 
     @Post()
+    @UseGuards(JwtAuthGuard)
     @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
     async createAuthor(@Body() authorData : AuthorDto, @Res() res) {
         try {
@@ -31,6 +32,7 @@ export class AuthorController {
     }
 
     @Get(':id')
+    @UseGuards(JwtAuthGuard)
     async getAuthorById(@Param('id') author_id, @Res() res) {
         try {
             const author = await this.authorService.getAuthorById(author_id);
@@ -41,6 +43,7 @@ export class AuthorController {
     }
 
     @Patch(':id')
+    @UseGuards(JwtAuthGuard)
     @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
     async updateAuthor(@Param('id') id, @Body() updatedAuthor : AuthorDto, @Res() res) {
         const author_name = updatedAuthor.author_name;

@@ -9,5 +9,3 @@ BEGIN
 END$$
 
 DELIMITER ;
-
-drop event evt_manage_overdue_fines;
