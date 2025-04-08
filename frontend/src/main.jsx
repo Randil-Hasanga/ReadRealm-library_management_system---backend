@@ -7,9 +7,11 @@ import Dashboard from './pages/Dashboard';
 import Books from './pages/Books';
 import BorrowedBooks from './pages/BorrowedBooks';
 import Fines from './pages/Fines';
+import LoginPage from './pages/LoginPage';
 
 const router = createBrowserRouter([
-  { path: '/', element: (<App><Dashboard /></App>), },
+  { path: '/', element: (<LoginPage />), },
+  { path: '/dashboard', element: (<App><Dashboard /></App>), },
   { path: '/books', element: (<App><Books /></App>), },
   { path: '/borrowed-books', element: (<App><BorrowedBooks /></App>), },
   { path: '/fines', element: (<App><Fines /></App>), }

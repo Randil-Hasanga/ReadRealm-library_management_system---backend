@@ -17,8 +17,8 @@ export class AuthController {
         const token = req.user;
         res.cookie('auth_token', token, {
             httpOnly: true,
-            secure: true,
-            sameSite: 'strict',
+            secure: false,
+            sameSite: 'lax',
             maxAge: 1000 * 60 * 60 * 24,
         })
 

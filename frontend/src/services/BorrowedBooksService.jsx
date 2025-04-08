@@ -1,7 +1,7 @@
 import axios from "axios";
 import FineService from "./FineService";
 
-const baseUrl = `${import.meta.env.VITE_BASE_URL}/borrowed-book`;
+const baseUrl = `${import.meta.env.VITE_BASE_URL}/borrowed-books`;
 
 const BorrowedBooksService = {
   getBorrowedBooks: async () => {

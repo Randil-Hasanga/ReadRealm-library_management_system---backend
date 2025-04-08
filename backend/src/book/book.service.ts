@@ -29,14 +29,15 @@ export class BookService {
                 'quantity',
                 'available_qty'
             ],
-            include:[
+            include: [
                 {
                     model: Author,
                     as: 'author',
                     attributes: []
                 }
             ],
-            where: {isActive: true}});
+            where: { isActive: true }
+        });
         if (!books) {
             console.error('No books found');
         }
@@ -44,7 +45,24 @@ export class BookService {
     }
 
     async getBookById(id) {
-        const book = await Book.findOne({ where: { book_id: id } });
+        const book = await Book.findOne({
+            attributes: [
+                'book_id',
+                'book_name',
+                'ISBN',
+                'author_id',
+                [Sequelize.col('Author.author_name'), 'author_name'],
+                'quantity',
+                'available_qty'
+            ],
+            include: [
+                {
+                    model: Author,
+                    as: 'author',
+                    attributes: []
+                }
+            ], where: { book_id: id }
+        });
         if (!book) {
             console.error('No book found');
         }
@@ -61,7 +79,24 @@ export class BookService {
     }
 
     async getDeletedBooks() {
-        const deletedBooks = Book.findAll({ where: { isActive: false } });
+        const deletedBooks = Book.findAll({
+            attributes: [
+                'book_id',
+                'book_name',
+                'ISBN',
+                'author_id',
+                [Sequelize.col('Author.author_name'), 'author_name'],
+                'quantity',
+                'available_qty'
+            ],
+            include: [
+                {
+                    model: Author,
+                    as: 'author',
+                    attributes: []
+                }
+            ], where: { isActive: false }
+        });
         if (!deletedBooks) {
             console.error('No deleted books found');
         }
