@@ -6,8 +6,8 @@ import * as path from 'path';
 dotenv.config();
 
 const certificatePath = process.env.NODE_ENV === 'production'
-    ? path.join(__dirname, '..', 'certificates', 'DigiCertGlobalRootCA.crt')  // For production, it's in the root
-    : path.join(__dirname, 'certificates', 'DigiCertGlobalRootCA.crt');  // For development, it's in src
+    ? path.join(__dirname, '..', 'certificates', 'DigiCertGlobalRootCA.pem')  // For production, it's in the root
+    : path.join(__dirname, 'certificates', 'DigiCertGlobalRootCA.pem');  // For development, it's in src
 
 const sslOptions = process.env.NODE_ENV === 'production' 
     ? { ca: fs.readFileSync(certificatePath) } 
