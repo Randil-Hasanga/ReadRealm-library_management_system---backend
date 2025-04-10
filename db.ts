@@ -10,7 +10,7 @@ const sequelize = new Sequelize(process.env.DB_NAME as string, process.env.DB_US
     dialect: 'mysql',
     dialectOptions: {
         ssl: {
-            ca: fs.readFileSync(path.join(__dirname, 'certificates', 'DigiCertGlobalRootCA.crt')),
+            ca: fs.readFileSync(path.join(__dirname, 'src','certificates', 'DigiCertGlobalRootCA.crt')),
         }
     }
 });
