@@ -1,11 +1,18 @@
 import { Sequelize } from 'sequelize';
 import * as dotenv from 'dotenv';
+import * as fs from 'fs';
+import * as path from 'path';
 
 dotenv.config();
 
 const sequelize = new Sequelize(process.env.DB_NAME as string, process.env.DB_USER as string, process.env.DB_PASS as string, {
     host: process.env.DB_HOST,
     dialect: 'mysql',
+    dialectOptions: {
+        ssl: {
+            ca: fs.readFileSync(path.join(__dirname, 'certificates', 'DigiCertGlobalRootCA.crt')),
+        }
+    }
 });
 
 (async () => {

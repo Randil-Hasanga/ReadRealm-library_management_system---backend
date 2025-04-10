@@ -33,7 +33,7 @@ export class BookService {
                 {
                     model: Author,
                     as: 'author',
-                    attributes: []
+                    attributes: ['author_name']
                 }
             ],
             where: { isActive: true }
