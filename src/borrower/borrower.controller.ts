@@ -59,8 +59,8 @@ export class BorrowerController {
     async deleteOrRestoreBorrower (@Param('id') id,@Param('isActive') isActive : boolean, @Res() res)  {
         console.log(isActive)
         try {
-            const effectedRows = await this.borrowerService.deleteOrRestoreBorrower(id, {isActive : isActive});
-            res.status(201).json({ message: "Borrower updated successfully", effectedRows: effectedRows });
+            const response = await this.borrowerService.deleteOrRestoreBorrower(id, {isActive : isActive});
+            res.status(201).json({ message: "Borrower updated successfully", effectedRows: response });
         } catch (error) {
             res.status(501).json({ message: "Borrower update failed", error: error.message });
         }
