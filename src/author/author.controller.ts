@@ -2,8 +2,10 @@ import { Body, Controller, Get, Param, Patch, Post, Res, UseGuards, UsePipes, Va
 import { AuthorDto } from './dto/author.dto';
 import { AuthorService } from './author.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
-import { ApiBody, ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiCreatedResponse, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { CreateAuthorResponseDto } from './dto/CreateAuthorResponseDto';
+import { RetrieveAuthorResponseDto } from './dto/RetriveAuthorResponseDto';
+import { UpdateAuthorResponseDto } from './dto/UpdateAuthorResponseDto';
 
 @ApiTags('Authors')
 @Controller('authors')
@@ -13,7 +15,18 @@ export class AuthorController {
 
     @ApiOperation({ description: 'Used for create authors' })
     @ApiCreatedResponse({ type: CreateAuthorResponseDto })
-    @ApiBody({ schema: { type: 'object', properties: { author_name: { type: 'string', example: 'Martin Wickramasinghe', description: 'Author name you want to insert' }, }, required: ['author_name'], }, })
+    @ApiBody({
+        schema: {
+            type: 'object',
+            properties: {
+                author_name: {
+                    type: 'string',
+                    example: 'Martin Wickramasinghe',
+                    description: 'Author name you want to insert'
+                },
+            }, required: ['author_name'],
+        },
+    })
     @Post()
     @UseGuards(JwtAuthGuard)
     @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
@@ -39,6 +52,9 @@ export class AuthorController {
         }
     }
 
+    @ApiOperation({ description: 'Get user by id' })
+    @ApiCreatedResponse({ type: RetrieveAuthorResponseDto })
+    @ApiParam({ name: 'id', type: Number, description: 'ID of the author to retrieve' })
     @Get(':id')
     @UseGuards(JwtAuthGuard)
     async getAuthorById(@Param('id') author_id, @Res() res) {
@@ -50,6 +66,21 @@ export class AuthorController {
         }
     }
 
+    @ApiOperation({ description: 'Update user by id' })
+    @ApiCreatedResponse({ type: UpdateAuthorResponseDto })
+    @ApiParam({ name: 'id', type: Number, description: 'ID of the author to update' })
+    @ApiBody({
+        schema: {
+            type: 'object',
+            properties: {
+                author_name: {
+                    type: 'string',
+                    example: 'John',
+                    description: 'Author name you want to update'
+                },
+            }, required: ['author_name'],
+        },
+    })
     @Patch(':id')
     @UseGuards(JwtAuthGuard)
     @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
