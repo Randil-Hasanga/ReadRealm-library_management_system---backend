@@ -1,7 +1,9 @@
 import { Controller, Get, Param, Patch, Res, UseGuards } from '@nestjs/common';
 import { FineService } from './fine.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Fines')
 @Controller('fines')
 export class FineController {
     constructor(private readonly fineService: FineService) { }

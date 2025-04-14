@@ -2,7 +2,9 @@ import { Body, Controller, Delete, Get, Param, Patch, Post, Res, UseGuards, UseP
 import { BorrowerDTO } from './borrower.dto';
 import { BorrowerService } from './borrower.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Borrowers')
 @Controller('borrowers')
 export class BorrowerController {
 

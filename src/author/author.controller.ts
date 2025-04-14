@@ -1,17 +1,23 @@
 import { Body, Controller, Get, Param, Patch, Post, Res, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
-import { AuthorDto } from './author.dto';
+import { AuthorDto } from './dto/author.dto';
 import { AuthorService } from './author.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
+import { ApiBody, ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { CreateAuthorResponseDto } from './dto/CreateAuthorResponseDto';
 
+@ApiTags('Authors')
 @Controller('authors')
 export class AuthorController {
 
-    constructor(private readonly authorService : AuthorService) {}
+    constructor(private readonly authorService: AuthorService) { }
 
+    @ApiOperation({ description: 'Used for create authors' })
+    @ApiCreatedResponse({ type: CreateAuthorResponseDto })
+    @ApiBody({ schema: { type: 'object', properties: { author_name: { type: 'string', example: 'Martin Wickramasinghe', description: 'Author name you want to insert' }, }, required: ['author_name'], }, })
     @Post()
     @UseGuards(JwtAuthGuard)
     @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
-    async createAuthor(@Body() authorData : AuthorDto, @Res() res) {
+    async createAuthor(@Body() authorData: AuthorDto, @Res() res) {
         try {
             const newAuthor = await this.authorService.createAuthor(authorData);
             res.status(201).json({ message: "Author created successfully", data: newAuthor });
@@ -20,6 +26,8 @@ export class AuthorController {
         }
     }
 
+    @ApiOperation({ description: 'Get all users' })
+    @ApiCreatedResponse({ type: [AuthorDto] })
     @Get()
     @UseGuards(JwtAuthGuard)
     async getAuthors(@Res() res) {
@@ -45,11 +53,11 @@ export class AuthorController {
     @Patch(':id')
     @UseGuards(JwtAuthGuard)
     @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
-    async updateAuthor(@Param('id') id, @Body() updatedAuthor : AuthorDto, @Res() res) {
+    async updateAuthor(@Param('id') id, @Body() updatedAuthor: AuthorDto, @Res() res) {
         const author_name = updatedAuthor.author_name;
 
         try {
-            const updatedAuthor = await this.authorService.updateAuthor(id, {author_name});
+            const updatedAuthor = await this.authorService.updateAuthor(id, { author_name });
             res.status(201).json({ message: "Author updated successfully", data: updatedAuthor });
         } catch (error) {
             res.status(501).json({ message: "Error updating author", data: error.message });

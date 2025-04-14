@@ -2,7 +2,9 @@ import { Body, Controller, Delete, Get, Param, Patch, Post, Req, Res, UseGuards,
 import { BookService } from './book.service';
 import { BookDto } from './book.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Books')
 @Controller('books')
 export class BookController {
 
