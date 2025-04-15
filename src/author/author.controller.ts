@@ -13,7 +13,7 @@ export class AuthorController {
 
     constructor(private readonly authorService: AuthorService) { }
 
-    @ApiOperation({ description: 'Used for create authors' })
+    @ApiOperation({ summary: 'Used for create authors' })
     @ApiCreatedResponse({ type: CreateAuthorResponseDto })
     @ApiBody({
         schema: {
@@ -39,7 +39,7 @@ export class AuthorController {
         }
     }
 
-    @ApiOperation({ description: 'Get all users' })
+    @ApiOperation({ summary: 'Get all users' })
     @ApiCreatedResponse({ type: [AuthorDto] })
     @Get()
     @UseGuards(JwtAuthGuard)
@@ -52,7 +52,7 @@ export class AuthorController {
         }
     }
 
-    @ApiOperation({ description: 'Get user by id' })
+    @ApiOperation({ summary: 'Get user by id' })
     @ApiCreatedResponse({ type: RetrieveAuthorResponseDto })
     @ApiParam({ name: 'id', type: Number, description: 'ID of the author to retrieve' })
     @Get(':id')
@@ -66,7 +66,7 @@ export class AuthorController {
         }
     }
 
-    @ApiOperation({ description: 'Update user by id' })
+    @ApiOperation({ summary: 'Update user by id' })
     @ApiCreatedResponse({ type: UpdateAuthorResponseDto })
     @ApiParam({ name: 'id', type: Number, description: 'ID of the author to update' })
     @ApiBody({
