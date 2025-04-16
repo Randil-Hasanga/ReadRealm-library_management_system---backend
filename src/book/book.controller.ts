@@ -111,4 +111,14 @@ export class BookController {
             res.status(501).json({ message: "Book update failed", error: error.message });
         }
     }
+
+    @Get('count/:author_id')
+    async getBookCountByAuthorId(@Param('author_id') author_id, @Res() res){
+        try {
+            const count = await this.bookService.getBookCountByAuthorId(author_id);
+            res.status(201).json({ message: "Book count retrieved", BookCount: count });
+        } catch (error) {
+            
+        }
+    }
 }

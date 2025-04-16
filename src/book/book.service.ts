@@ -116,4 +116,14 @@ export class BookService {
         }
         return await Book.findOne({ where: { book_id: id } });
     }
+
+    async getBookCountByAuthorId(author_id: number) {
+        try {
+            const count = await Book.count({ where: { author_id } });
+            return count || 0;
+        } catch (error) {
+            console.error(`Error fetching book count for author_id ${author_id}:`, error);
+            throw new Error("Failed to retrieve book count.");
+        }
+    }
 }
