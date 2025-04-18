@@ -1,8 +1,13 @@
-import { Body, Controller, Get, Param, Patch, Post, Res, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, HttpStatus, Param, Patch, Post, Res, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { BorrowedbooksService } from './borrowedbooks.service';
-import { BorrwedBookDTO } from './borrowedbooks.dto';
+import { BorrowedBookDTO } from './dto/borrowedbooks.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiBody, ApiCreatedResponse, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { CreateBorrowedBookResponseDto } from './dto/CreateBorrowedBookResponseDto';
+import { BorrowerDTO } from 'src/borrower/borrower.dto';
+import { ReturnBorrowedBookResponseDto } from './dto/returnBorrowedBook.dto';
+import { BorrowedBookInfoDto, BorrowedBooksByBookIdResponseDto, BorrowedBooksByBorrowerIdResponseDto, BorrowedBooksResponseDto, SingleBorrowedBooksResponseDto } from './dto/BorrowedBooksResponse.dto';
+import { OverdueBooksResponseDto } from './dto/overDueBooksResponse.dto';
 
 @ApiTags('Borrowed Books')
 @Controller('borrowed-books')
@@ -11,18 +16,45 @@ export class BorrowedbooksController {
     constructor(private readonly borrowedBooksService: BorrowedbooksService) { }
 
     @Post()
+    @ApiOperation({ summary: 'Borrow a book' })
+    @ApiCreatedResponse({ type: CreateBorrowedBookResponseDto })
+    @ApiNotFoundResponse({
+        schema:
+        {
+            type: 'object',
+            properties: {
+                statusCode: {
+                    type: 'number',
+                    example: 404,
+                },
+                message: {
+                    type: 'string',
+                    example: "Book is not available for borrowing"
+                }
+            }, required: ['statusCode', 'message']
+        }
+    })
+    @ApiBody({ type: BorrowedBookDTO })
     @UseGuards(JwtAuthGuard)
     @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
-    async insertBorrowedBook(@Res() res, @Body() borrowedBookData: BorrwedBookDTO) {
+    async insertBorrowedBook(@Res() res, @Body() borrowedBookData: BorrowedBookDTO) {
         try {
             const newBorrowedBook = await this.borrowedBooksService.insertBorrowedBook(borrowedBookData);
-            res.status(201).json({ message: 'Borrowed book inserted', data: newBorrowedBook });
+            if (typeof (newBorrowedBook) == 'string') {
+                res.status(HttpStatus.NOT_FOUND).json({
+                    statusCode: HttpStatus.NOT_FOUND,
+                    message: newBorrowedBook,
+                });
+            } else { res.status(201).json({ message: 'Borrowed book inserted', data: newBorrowedBook }); }
+
         } catch (error) {
             res.status(501).json({ message: 'insertion failed', error: error.message });
         }
     }
 
     @Get()
+    @ApiOperation({ summary: "Get all borrowed books" })
+    @ApiCreatedResponse({type: BorrowedBooksResponseDto})
     @UseGuards(JwtAuthGuard)
     async getBorrowedBooks(@Res() res) {
         try {
@@ -34,6 +66,8 @@ export class BorrowedbooksController {
     }
 
     @Get('over-due')
+    @ApiOperation({ summary: "Get all over due books" })
+    @ApiCreatedResponse({type: OverdueBooksResponseDto})
     @UseGuards(JwtAuthGuard)
     async getOverDueBooks(@Res() res) {
         try {
@@ -45,6 +79,9 @@ export class BorrowedbooksController {
     }
 
     @Get(':id')
+    @ApiParam({name: 'id', example: 1})
+    @ApiOperation({summary: 'Get borrowed book by borrowed book id'})
+    @ApiCreatedResponse({type: SingleBorrowedBooksResponseDto})
     @UseGuards(JwtAuthGuard)
     async getBorrowedBookById(@Param('id') id, @Res() res) {
         try {
@@ -56,6 +93,9 @@ export class BorrowedbooksController {
     }
 
     @Get('books/:id')
+    @ApiParam({name: 'id', example: 1})
+    @ApiOperation({summary: 'Get borrowed book by book id'})
+    @ApiCreatedResponse({type: BorrowedBooksByBookIdResponseDto})
     @UseGuards(JwtAuthGuard)
     async getBorrowedBooksByBookId(@Param('id') id, @Res() res) {
         try {
@@ -67,6 +107,9 @@ export class BorrowedbooksController {
     }
 
     @Get('borrower/:id')
+    @ApiParam({name: 'id', example: 1})
+    @ApiOperation({summary: 'Get borrowed book by borrower id'})
+    @ApiCreatedResponse({type: BorrowedBooksByBorrowerIdResponseDto})
     @UseGuards(JwtAuthGuard)
     async getBorrowedBooksByBorrowerId(@Param('id') id, @Res() res) {
         try {
@@ -78,16 +121,34 @@ export class BorrowedbooksController {
     }
 
     @Patch('return/:id')
+    @ApiOperation({ summary: "Return Borrowed Book" })
+    @ApiOkResponse({ type: ReturnBorrowedBookResponseDto })
+    @ApiParam({name: 'id', example: 3})
+    @ApiBadRequestResponse({
+        schema: {
+            type: 'object',
+            properties: {
+                message: {
+                    type: 'string',
+                    example: 'Return failed'
+                },
+                error: {
+                    type: 'string',
+                    example: 'This book has already been returned'
+                }
+            }, required: ['message', 'error']
+        }
+    })
     @UseGuards(JwtAuthGuard)
-    async returnBook(@Param('id') bb_id, @Res() res)  {
+    async returnBook(@Param('id') bb_id, @Res() res) {
         try {
             const book = await this.borrowedBooksService.returnBook(bb_id);
-            res.status(200).json({ message: 'Borrowed book returned', data: book});
+            res.status(200).json({ message: 'Borrowed book returned', data: book });
         } catch (error) {
             console.error('Error in returnBook controller:', error.message);
             res.status(400).json({ message: 'Return failed', error: error.message });
         }
-        
+
     }
 
 

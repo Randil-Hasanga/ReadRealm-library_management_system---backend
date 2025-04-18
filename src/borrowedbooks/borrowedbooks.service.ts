@@ -106,7 +106,7 @@ export class BorrowedbooksService {
                 return new_borrowed_book; // Return the newly created borrowed book
             } else {
                 await transaction.rollback();
-                console.error('Book is not available for borrowing');
+                return 'Book is not available for borrowing';
             }
         } catch (error) {
             await transaction.rollback();
