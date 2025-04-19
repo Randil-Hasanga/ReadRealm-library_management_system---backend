@@ -137,9 +137,9 @@ export class FineService {
 
     async payFine(fine_id) {
 
-        const fine = await Fine.findOne({ where: { fine_id: fine_id } });
+        const fine = await Fine.findOne({ where: { fine_id: fine_id , isPaid: false} });
         if (!fine) {
-            console.error('Fine not found');
+            return('Fine not found');
         }
 
         const [effectedRows] = await Fine.update({ isPaid: true }, { where: { fine_id: fine_id } });

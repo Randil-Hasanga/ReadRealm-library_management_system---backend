@@ -1,8 +1,9 @@
 import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post, Req, Res, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { UserService } from './user.service';
-import { UserDto } from './user.dto';
+import { UpdateUserDto, UserDto } from './dto/user.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiBody, ApiCreatedResponse, ApiForbiddenResponse, ApiNotFoundResponse, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { BadRequestErrorDto, EmailExistsErrorDto, IsActiveDto, UpdateUsersResponseDto, UserCreatedDto, UserNotFoundDto, UsersResponseDto } from './dto/userResponse.dto';
 
 @ApiTags('Users')
 @Controller('users')
@@ -10,6 +11,8 @@ export class UserController {
     constructor(private readonly userService: UserService) {}
 
     @Get()
+    @ApiOperation({summary: 'Get all users'})
+    @ApiCreatedResponse({type: UsersResponseDto})
     @UseGuards(JwtAuthGuard)
     async getUsers(@Res() res) {
         try {
@@ -21,6 +24,11 @@ export class UserController {
     }
 
     @Post()
+    @ApiOperation({summary: 'Create new user'})
+    @ApiCreatedResponse({type: UserCreatedDto})
+    @ApiForbiddenResponse({type: EmailExistsErrorDto})
+    @ApiBadRequestResponse({type: BadRequestErrorDto})
+    @ApiBody({type: UserDto})
     @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
     async createUser(@Body() userData: UserDto) {
         return {
@@ -30,6 +38,9 @@ export class UserController {
     }
 
     @Get(':id')
+    @ApiParam({name: 'id', example: 1})
+    @ApiOperation({summary: 'Get user by id'})
+    @ApiCreatedResponse({type: UsersResponseDto})
     @UseGuards(JwtAuthGuard)
     async getUserById (@Param('id') user_id, @Res() res) {
         
@@ -42,6 +53,11 @@ export class UserController {
     }
 
     @Delete(':id/delete-or-restore')
+    @ApiParam({name: 'id', example: 1})
+    @ApiOperation({summary: 'Delete user by id'})
+    @ApiCreatedResponse({type: UpdateUsersResponseDto})
+    @ApiBody({type: IsActiveDto})
+    @ApiNotFoundResponse({type: UserNotFoundDto})
     @UseGuards(JwtAuthGuard)
     async deleteOrRestoreUserById (@Param('id') user_id, @Body() userData : UserDto, @Res() res) {
         const isActive = userData.isActive;
@@ -54,6 +70,11 @@ export class UserController {
     }
 
     @Patch(':id/update')
+    @ApiParam({name: 'id', example: 1})
+    @ApiOperation({summary: 'Update user by id'})
+    @ApiCreatedResponse({type: UpdateUsersResponseDto})
+    @ApiNotFoundResponse({type: UserNotFoundDto})
+    @ApiBody({type: UpdateUserDto})
     @UseGuards(JwtAuthGuard)
     async updateUserById(@Param('id') userId, @Body() updatedUserData: UserDto, @Res() res){
         try {

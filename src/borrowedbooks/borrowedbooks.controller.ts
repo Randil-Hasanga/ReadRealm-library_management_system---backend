@@ -4,7 +4,7 @@ import { BorrowedBookDTO } from './dto/borrowedbooks.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 import { ApiBadRequestResponse, ApiBody, ApiCreatedResponse, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { CreateBorrowedBookResponseDto } from './dto/CreateBorrowedBookResponseDto';
-import { BorrowerDTO } from 'src/borrower/borrower.dto';
+import { BorrowerDTO } from 'src/borrower/dto/borrower.dto';
 import { ReturnBorrowedBookResponseDto } from './dto/returnBorrowedBook.dto';
 import { BorrowedBookInfoDto, BorrowedBooksByBookIdResponseDto, BorrowedBooksByBorrowerIdResponseDto, BorrowedBooksResponseDto, SingleBorrowedBooksResponseDto } from './dto/BorrowedBooksResponse.dto';
 import { OverdueBooksResponseDto } from './dto/overDueBooksResponse.dto';
