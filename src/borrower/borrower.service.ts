@@ -21,6 +21,7 @@ export class BorrowerService {
 
     async getBorrowers() {
         const borrowers = await Borrower.findAll({
+            where: { isActive: true },
             attributes: [
                 'borrower_id',
                 [Sequelize.fn('CONCAT', Sequelize.col('fname'), ' ', Sequelize.col('lname')), 'BorrowerFullName'],
@@ -30,7 +31,7 @@ export class BorrowerService {
                 'contact_no'
             ],
             raw: true,
-            where: {isActive : true}
+
         });
         if (!borrowers) {
             console.error('No borrower found');
@@ -63,8 +64,8 @@ export class BorrowerService {
         if (!existing_borrower) {
             console.error('Borrower not found');
         }
-        const checkFIne = await Fine.findOne({where: {borrower_id : id}});
-        if(checkFIne){
+        const checkFIne = await Fine.findOne({ where: { borrower_id: id } });
+        if (checkFIne) {
             return "Borrower has fines to pay";
         }
         const [effectedRows] = await Borrower.update(isActive, { where: { borrower_id: id } });

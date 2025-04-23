@@ -17,12 +17,14 @@ import { FineService } from './fine/fine.service';
 import { AuthModule } from './auth/auth.module';
 import { AuthService } from './auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
+import { SummeryModule } from './summery/summery.module';
+import { SummeryService } from './summery/summery.service';
 
 @Module({
   imports: [ConfigModule.forRoot({
     isGlobal: true
-  }),UserModule, BookModule, AuthorModule, BorrowedbooksModule, BorrowerModule, FineModule, AuthModule],
+  }),UserModule, BookModule, AuthorModule, BorrowedbooksModule, BorrowerModule, FineModule, AuthModule, SummeryModule],
   controllers: [AppController, UserController],
-  providers: [AppService, UserService, BookService, AuthorService, BorrowedbooksService, FineService, AuthService, JwtService],
+  providers: [AppService, UserService, BookService, AuthorService, BorrowedbooksService, FineService, AuthService,SummeryService, JwtService],
 })
 export class AppModule {}

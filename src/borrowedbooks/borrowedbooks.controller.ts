@@ -54,7 +54,7 @@ export class BorrowedbooksController {
 
     @Get()
     @ApiOperation({ summary: "Get all borrowed books" })
-    @ApiCreatedResponse({type: BorrowedBooksResponseDto})
+    @ApiCreatedResponse({ type: BorrowedBooksResponseDto })
     @UseGuards(JwtAuthGuard)
     async getBorrowedBooks(@Res() res) {
         try {
@@ -67,7 +67,7 @@ export class BorrowedbooksController {
 
     @Get('over-due')
     @ApiOperation({ summary: "Get all over due books" })
-    @ApiCreatedResponse({type: OverdueBooksResponseDto})
+    @ApiCreatedResponse({ type: OverdueBooksResponseDto })
     @UseGuards(JwtAuthGuard)
     async getOverDueBooks(@Res() res) {
         try {
@@ -78,10 +78,35 @@ export class BorrowedbooksController {
         }
     }
 
+    @Get('recent-borrowers')
+    @ApiOperation({ summary: 'Get recent borrowers for chart' })
+    @ApiOkResponse({
+        schema: {
+            type: 'array',
+            items: {
+                type: 'object',
+                properties: {
+                    name: { type: 'string', example: 'John Doe' },
+                    book: { type: 'string', example: 'The Great Gatsby' },
+                    due: { type: 'string', example: '2023-05-10' },
+                },
+            },
+        },
+    })
+    @UseGuards(JwtAuthGuard)
+    async getRecentBorrowers(@Res() res) {
+        try {
+            const borrowers = await this.borrowedBooksService.getRecentBorrowers();
+            res.status(200).json({ message: 'Recent borrowers', data: borrowers });
+        } catch (error) {
+            res.status(501).json({ message: 'retrieval failed', error: error.message });
+        }
+    }
+
     @Get(':id')
-    @ApiParam({name: 'id', example: 1})
-    @ApiOperation({summary: 'Get borrowed book by borrowed book id'})
-    @ApiCreatedResponse({type: SingleBorrowedBooksResponseDto})
+    @ApiParam({ name: 'id', example: 1 })
+    @ApiOperation({ summary: 'Get borrowed book by borrowed book id' })
+    @ApiCreatedResponse({ type: SingleBorrowedBooksResponseDto })
     @UseGuards(JwtAuthGuard)
     async getBorrowedBookById(@Param('id') id, @Res() res) {
         try {
@@ -93,9 +118,9 @@ export class BorrowedbooksController {
     }
 
     @Get('books/:id')
-    @ApiParam({name: 'id', example: 1})
-    @ApiOperation({summary: 'Get borrowed book by book id'})
-    @ApiCreatedResponse({type: BorrowedBooksByBookIdResponseDto})
+    @ApiParam({ name: 'id', example: 1 })
+    @ApiOperation({ summary: 'Get borrowed book by book id' })
+    @ApiCreatedResponse({ type: BorrowedBooksByBookIdResponseDto })
     @UseGuards(JwtAuthGuard)
     async getBorrowedBooksByBookId(@Param('id') id, @Res() res) {
         try {
@@ -107,9 +132,9 @@ export class BorrowedbooksController {
     }
 
     @Get('borrower/:id')
-    @ApiParam({name: 'id', example: 1})
-    @ApiOperation({summary: 'Get borrowed book by borrower id'})
-    @ApiCreatedResponse({type: BorrowedBooksByBorrowerIdResponseDto})
+    @ApiParam({ name: 'id', example: 1 })
+    @ApiOperation({ summary: 'Get borrowed book by borrower id' })
+    @ApiCreatedResponse({ type: BorrowedBooksByBorrowerIdResponseDto })
     @UseGuards(JwtAuthGuard)
     async getBorrowedBooksByBorrowerId(@Param('id') id, @Res() res) {
         try {
@@ -123,7 +148,7 @@ export class BorrowedbooksController {
     @Patch('return/:id')
     @ApiOperation({ summary: "Return Borrowed Book" })
     @ApiOkResponse({ type: ReturnBorrowedBookResponseDto })
-    @ApiParam({name: 'id', example: 3})
+    @ApiParam({ name: 'id', example: 3 })
     @ApiBadRequestResponse({
         schema: {
             type: 'object',
@@ -150,6 +175,8 @@ export class BorrowedbooksController {
         }
 
     }
+
+
 
 
 }

@@ -339,4 +339,47 @@ export class BorrowedbooksService {
             throw error;
         }
     }
+
+    async getRecentBorrowers() {
+        try {
+            const recentBorrowers = await BorrowedBook.findAll({
+                where: {
+                    isReturned: false,
+                    return_date: {
+                        [Op.gte]: Sequelize.fn('NOW') // Ensure the return date is in the future
+                    }
+                },
+                attributes: [
+                    'return_date',
+                    [Sequelize.fn('CONCAT', Sequelize.col('Borrower.fname'), ' ', Sequelize.col('Borrower.lname')), 'name'],
+                    [Sequelize.col('Book.book_name'), 'book']
+                ], // Fetch only the required fields
+                include: [
+                    {
+                        model: Borrower,
+                        as: 'borrower',
+                        attributes: []
+                    },
+                    {
+                        model: Book,
+                        as: 'book',
+                        attributes: []
+                    }
+                ],
+                order: [['return_date', 'ASC']], // Sort by return date in ascending order
+                limit: 5,// Limit to the most recent 5 borrowers
+                raw: true,
+            },);
+
+            const formattedBorrowers = recentBorrowers.map(borrower => ({
+                ...borrower,
+                due: dayjs(borrower.return_date).format('YYYY-MM-DD'), // Format date as YYYY-MM-DD
+            }));
+    
+            return formattedBorrowers;
+        } catch (error) {
+            console.error('Error in getRecentBorrowers:', error.message);
+            throw error;
+        }
+    }
 }
