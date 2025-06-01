@@ -56,6 +56,21 @@ print("Following is the Depth-First Search")
 dfs(visited, graph, '5')
 
 # tables ------------------------------------------
+def negation(p):
+    return not p
+
+def conjunction(p, q):
+    return p and q
+
+def disjunction(p, q):
+    return p or q
+
+def implication(p, q):
+    return not p or q
+
+def bi_implication(p, q):
+    return (not p or q) and (not q or p)
+
 print("p    q   a")
 for p in [True, False]:
     for q in [True, False]:
