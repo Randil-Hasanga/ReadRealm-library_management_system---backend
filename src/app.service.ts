@@ -219,6 +219,107 @@ print(f"Correlation coefficient (r): {r}")
 print(f"P-value: {p}")
 print(f"Standard error: {std_err}")
 
+#ANN ----------------------------------------
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.neural_network import MLPClassifier
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+
+try:
+    df = pd.read_csv('your_data.csv')
+except FileNotFoundError:
+    print("Error: 'your_data.csv' not found. Please upload the file or provide the correct path.")
+    # You might want to exit or handle this error appropriately
+    # For demonstration, let's create a dummy dataframe
+    data = {'feature1': np.random.rand(100),
+            'feature2': np.random.rand(100),
+            'target': np.random.randint(0, 2, 100)}
+    df = pd.DataFrame(data)
+    print("Using a dummy dataset for demonstration.")
+
+# Assuming the last column is the target variable and others are features
+X = df.drop(df.columns[-1], axis=1)
+y = df[df.columns[-1]]
+
+# Split data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+ann = MLPClassifier(hidden_layer_sizes=(10, 5), activation='relu', solver='adam', max_iter=500, random_state=42)
+
+# Train the ANN
+ann.fit(X_train, y_train)
+
+# Make predictions
+y_pred = ann.predict(X_test)
+
+# Evaluate the model
+accuracy = accuracy_score(y_test, y_pred)
+conf_matrix = confusion_matrix(y_test, y_pred)
+class_report = classification_report(y_test, y_pred)
+
+print(f"Accuracy: {accuracy:.2f}")
+print("\nConfusion Matrix:")
+print(conf_matrix)
+print("\nClassification Report:")
+print(class_report)   
+
+#SVR ----------------------------------------
+
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.svm import SVC
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report, precision_score, recall_score, f1_score
+
+# Load data from CSV
+try:
+    df = pd.read_csv('your_dataset.csv')  # Replace with your CSV file path
+except FileNotFoundError:
+    print("Error: 'your_dataset.csv' not found. Using dummy data for demonstration.")
+    data = {
+        'feature1': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+        'feature2': [10, 9, 8, 7, 6, 5, 4, 3, 2, 1],
+        'target': [0, 0, 0, 1, 1, 1, 0, 0, 1, 1]
+    }
+    df = pd.DataFrame(data)
+
+# Define features and target columns
+features = ['feature1', 'feature2']  # Update this based on your dataset
+target = 'target'                    # Update this based on your dataset
+
+# Split dataset into features (X) and target (y)
+X = df[features]
+y = df[target]
+
+# Split data into training and testing sets (75% train, 25% test)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=42)
+
+# Initialize the Support Vector Machine classifier with a linear kernel
+svm_model = SVC(kernel='linear', random_state=42)
+
+# Train the model
+svm_model.fit(X_train, y_train)
+
+# Predict on the test set
+y_pred = svm_model.predict(X_test)
+
+# Calculate evaluation metrics
+accuracy = accuracy_score(y_test, y_pred)
+cm = confusion_matrix(y_test, y_pred)
+cr = classification_report(y_test, y_pred)
+precision = precision_score(y_test, y_pred, average='weighted')
+recall = recall_score(y_test, y_pred, average='weighted')
+f1 = f1_score(y_test, y_pred, average='weighted')
+
+# Print evaluation results
+print(f"Accuracy: {accuracy:.2f}")
+print("\nConfusion Matrix:")
+print(cm)
+print("\nClassification Report:")
+print(cr)
+print(f"Precision: {precision:.2f}")
+print(f"Recall: {recall:.2f}")
+print(f"F1 Score: {f1:.2f}")
 `;
   }
 }
