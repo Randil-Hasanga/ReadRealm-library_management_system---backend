@@ -19,11 +19,12 @@ import { AuthService } from './auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
 import { SummeryModule } from './summery/summery.module';
 import { SummeryService } from './summery/summery.service';
+import { DipModule } from './dip/dip.module';
 
 @Module({
   imports: [ConfigModule.forRoot({
     isGlobal: true
-  }),UserModule, BookModule, AuthorModule, BorrowedbooksModule, BorrowerModule, FineModule, AuthModule, SummeryModule],
+  }),UserModule, BookModule, AuthorModule, BorrowedbooksModule, BorrowerModule, FineModule, AuthModule, SummeryModule, DipModule],
   controllers: [AppController, UserController],
   providers: [AppService, UserService, BookService, AuthorService, BorrowedbooksService, FineService, AuthService,SummeryService, JwtService],
 })
