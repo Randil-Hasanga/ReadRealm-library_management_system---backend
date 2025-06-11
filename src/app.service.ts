@@ -5,7 +5,7 @@ export class AppService {
   getHello(): string {
     return `
 
-https://readrealm-7cb62793f02a.herokuapp.com
+h ttps://readrealm-7cb62793f02a.herokuapp.com
 
 /dip/basic -> day 01
 /dip/clr -> color space
